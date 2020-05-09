@@ -1,3 +1,4 @@
+
 insert into category_entity
 values (1, 'image src', 'name');
 
@@ -10,4 +11,20 @@ values (1, 1);
 insert into category_entity_product_entity_list(category_entity_id, product_entity_list_id)
 values (1, 1);
 
+insert into order_entity(id, address, amount_payed, purchase_date, finalised)
+values (1, 'address', 12, '2003-12-31', 0);
+
+insert into shopping_cart_entity(id) values(1);
+
+insert into user_entity(id, email, first_name, last_name)
+values(1, 'p@gm.c', 'pooria', 'poorsarvi');
+
+insert into shopping_cart_entity_product_entities (shopping_cart_entity_id, product_entities_id)
+values(1, 1);
+
+# insert into order_entity_product_entities (order_entity_id, product_entities_id)
+# values (1, 1);
+
+insert into user_entity_order_entity_list (user_entity_id, order_entity_list_id)
+values (1, 1);
 

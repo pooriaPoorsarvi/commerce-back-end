@@ -22,6 +22,10 @@ public class OrderEntity {
     @Size(min = 1, max = 5000)
     String address;
 
+    @Column(columnDefinition="INT  default '0'")
+    @NotNull
+    Integer finalised;
+
     @ManyToMany(fetch = FetchType.LAZY)
     Set<ProductEntity> productEntities;
 

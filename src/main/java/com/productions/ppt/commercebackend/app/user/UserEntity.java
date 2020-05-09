@@ -10,6 +10,8 @@ import java.util.Set;
 @Entity
 public class UserEntity {
 
+//  TODO : add user password field and jwt
+
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   Integer id;
