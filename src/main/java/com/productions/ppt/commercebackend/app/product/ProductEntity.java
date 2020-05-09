@@ -21,7 +21,7 @@ public class ProductEntity {
   @Size(min = 1, max = 5000)
   String description;
 
-  @NotNull Float price;
+  @NotNull Double price;
 
   @Size(min = 1, max = 2000)
   String imageSrc;
@@ -30,7 +30,7 @@ public class ProductEntity {
       fetch = FetchType.LAZY,
       cascade = {CascadeType.PERSIST, CascadeType.MERGE})
   @JsonIgnore
-  private Set<CategoryEntity> categoryEntityList = new HashSet<>();
+  private Set<CategoryEntity> categoryEntityList;
 
   public Set<CategoryEntity> getCategoryEntityList() {
     return categoryEntityList;
@@ -64,11 +64,11 @@ public class ProductEntity {
     this.description = description;
   }
 
-  public Float getPrice() {
+  public Double getPrice() {
     return price;
   }
 
-  public void setPrice(Float price) {
+  public void setPrice(Double price) {
     this.price = price;
   }
 
