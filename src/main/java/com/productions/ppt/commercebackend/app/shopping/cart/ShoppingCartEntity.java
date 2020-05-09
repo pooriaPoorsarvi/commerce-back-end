@@ -1,7 +1,6 @@
 package com.productions.ppt.commercebackend.app.shopping.cart;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.Set;

@@ -1,6 +1,8 @@
 package com.productions.ppt.commercebackend.app.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
+import com.productions.ppt.commercebackend.app.user.UserEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -29,6 +31,25 @@ public class OrderEntity {
     @ManyToMany(fetch = FetchType.LAZY)
     Set<ProductEntity> productEntities;
 
+//    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    UserEntity owner;
+
+    public Integer getFinalised() {
+        return finalised;
+    }
+
+    public void setFinalised(Integer finalised) {
+        this.finalised = finalised;
+    }
+
+    public UserEntity getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UserEntity owner) {
+        this.owner = owner;
+    }
 
     public Integer getId() {
         return id;

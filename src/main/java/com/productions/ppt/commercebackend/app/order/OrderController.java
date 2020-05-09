@@ -42,7 +42,7 @@ public class OrderController {
 
     Optional<OrderEntity> orderEntityOptional = orderRepository.findById(ID);
 
-    if (!orderEntityOptional.isPresent()||orderEntityOptional.get().finalised!=0) {
+    if (!orderEntityOptional.isPresent() || orderEntityOptional.get().finalised != 0) {
       throw new RuntimeException();
     }
 
@@ -55,5 +55,13 @@ public class OrderController {
             .buildAndExpand(orderEntity.id)
             .toUri();
     return ResponseEntity.created(location).build();
+  }
+
+  @PostMapping("/orders/{ID}/finalize")
+  ResponseEntity<Object> finalise() {
+    // TODO :   Finalize, add checks for finalising in other functions, add date here for finalising
+    //    Also make this and the one in product and category which have the same pattern use a
+    //    transaction
+    return null;
   }
 }
