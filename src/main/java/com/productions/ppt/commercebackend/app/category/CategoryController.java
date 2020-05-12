@@ -1,6 +1,7 @@
 package com.productions.ppt.commercebackend.app.category;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
+import com.productions.ppt.commercebackend.app.product.ProductPurchaseRepository;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,8 +16,10 @@ import java.util.Set;
 public class CategoryController {
   CategoryRepository categoryRepository;
   ProductRepository productRepository;
-
-  CategoryController(CategoryRepository categoryRepository, ProductRepository productRepository) {
+  CategoryController(
+      CategoryRepository categoryRepository,
+      ProductRepository productRepository,
+      ProductPurchaseRepository productPurchaseRepository) {
     this.categoryRepository = categoryRepository;
     this.productRepository = productRepository;
   }
@@ -29,9 +32,11 @@ public class CategoryController {
     return ResponseEntity.created(location).build();
   }
 
-  @PostMapping("/category/{categoryID}/add/product/{productID}")
+  @PostMapping("/category/{categoryID}/add/product/{productID}}")
   ResponseEntity<Object> addProductToCategory(
-      @PathVariable Integer categoryID, @PathVariable Integer productID) {
+      @PathVariable Integer categoryID,
+      @PathVariable Integer productID,
+      @Valid @RequestBody Integer number) {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
     Optional<ProductEntity> productEntityOptional = productRepository.findById(productID);
 
@@ -42,7 +47,7 @@ public class CategoryController {
     ProductEntity productEntity = productEntityOptional.get();
     CategoryEntity categoryEntity = categoryEntityOptional.get();
 
-    categoryEntity.getProductEntityList().add(productEntity);
+    categoryEntity.getProductEntities().add(productEntity);
     productEntity.getCategoryEntityList().add(categoryEntity);
 
     categoryRepository.save(categoryEntity);
@@ -64,6 +69,6 @@ public class CategoryController {
   @GetMapping("/category/{ID}/products")
   Set<ProductEntity> getPro(@PathVariable Integer ID) {
     Optional<CategoryEntity> c = categoryRepository.findById(ID);
-    return c.map(CategoryEntity::getProductEntityList).orElse(null);
+    return c.map(CategoryEntity::getProductEntities).orElse(null);
   }
 }

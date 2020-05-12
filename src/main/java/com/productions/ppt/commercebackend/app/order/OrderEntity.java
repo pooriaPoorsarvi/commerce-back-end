@@ -1,7 +1,9 @@
 package com.productions.ppt.commercebackend.app.order;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
+import com.productions.ppt.commercebackend.app.product.ProductPurchaseEntity;
 import com.productions.ppt.commercebackend.app.user.UserEntity;
 
 import javax.persistence.*;
@@ -29,11 +31,17 @@ public class OrderEntity {
     Integer finalised;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    Set<ProductEntity> productEntities;
+    @JsonIgnore
+    private Set<ProductPurchaseEntity> productsPurchasedEntityList;
 
-//    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     UserEntity owner;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Double prince = 0.0;
+
 
     public Integer getFinalised() {
         return finalised;
@@ -83,14 +91,14 @@ public class OrderEntity {
         this.address = address;
     }
 
-    public Set<ProductEntity> getProductEntities() {
-        return productEntities;
+
+    public Set<ProductPurchaseEntity> getProductsPurchasedEntityList() {
+        return productsPurchasedEntityList;
     }
 
-    public void setProductEntities(Set<ProductEntity> productEntities) {
-        this.productEntities = productEntities;
+    public void setProductsPurchasedEntityList(Set<ProductPurchaseEntity> productEntityList) {
+        this.productsPurchasedEntityList = productEntityList;
     }
-
     public OrderEntity() {
     }
 }

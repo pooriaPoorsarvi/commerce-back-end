@@ -1,6 +1,8 @@
 package com.productions.ppt.commercebackend.app.order;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
+import com.productions.ppt.commercebackend.app.product.ProductPurchaseEntity;
+import com.productions.ppt.commercebackend.app.product.ProductPurchaseRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -13,9 +15,12 @@ import java.util.*;
 public class OrderController {
 
   OrderRepository orderRepository;
+  ProductPurchaseRepository productPurchaseRepository;
 
-  public OrderController(OrderRepository orderRepository) {
+  public OrderController(
+      OrderRepository orderRepository, ProductPurchaseRepository productPurchaseRepository) {
     this.orderRepository = orderRepository;
+    this.productPurchaseRepository = productPurchaseRepository;
   }
 
   //    TODO : Implement 404 for all of the functions
@@ -38,7 +43,7 @@ public class OrderController {
 
   @PostMapping("/orders/{ID}/add-product")
   ResponseEntity<Object> addProducts(
-      @PathVariable Integer ID, @Valid @RequestBody ProductEntity[] productEntities) {
+      @PathVariable Integer ID, @Valid @RequestBody ProductPurchaseEntity[] productEntities) {
 
     Optional<OrderEntity> orderEntityOptional = orderRepository.findById(ID);
 
@@ -46,8 +51,14 @@ public class OrderController {
       throw new RuntimeException();
     }
 
+    for (ProductPurchaseEntity productEntity : productEntities) {
+      this.productPurchaseRepository.save(productEntity);
+    }
+
     OrderEntity orderEntity = orderEntityOptional.get();
-    orderEntity.getProductEntities().addAll(Arrays.asList(productEntities));
+    orderEntity
+        .getProductsPurchasedEntityList()
+        .addAll(new ArrayList<>(Arrays.asList(productEntities)));
     orderRepository.save(orderEntity);
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()

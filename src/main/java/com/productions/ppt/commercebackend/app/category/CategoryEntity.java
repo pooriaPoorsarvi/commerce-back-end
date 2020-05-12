@@ -2,6 +2,7 @@ package com.productions.ppt.commercebackend.app.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
+import com.productions.ppt.commercebackend.app.product.ProductPurchaseEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
@@ -20,9 +21,17 @@ public class CategoryEntity {
   @Size(min = 0, max = 2000)
   String imgSrc;
 
+
   @ManyToMany(fetch = FetchType.LAZY)
-  @JsonIgnore
-  private Set<ProductEntity> productEntityList;
+  Set<ProductEntity> productEntities;
+
+  public Set<ProductEntity> getProductEntities() {
+    return productEntities;
+  }
+
+  public void setProductEntities(Set<ProductEntity> productEntities) {
+    this.productEntities = productEntities;
+  }
 
   public Integer getId() {
     return id;
@@ -46,13 +55,5 @@ public class CategoryEntity {
 
   public void setImgSrc(String imgSrc) {
     this.imgSrc = imgSrc;
-  }
-
-  public Set<ProductEntity> getProductEntityList() {
-    return productEntityList;
-  }
-
-  public void setProductEntityList(Set<ProductEntity> productEntityList) {
-    this.productEntityList = productEntityList;
   }
 }
