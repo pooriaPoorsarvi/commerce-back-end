@@ -2,7 +2,9 @@ insert into category_entity
 values (1, 'image src', 'name');
 
 insert into product_entity (id, description, image_src, name, price)
-values (1, 'description', 'image src', 'name', 1);
+values (1,
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        'https://worldstrides.com/wp-content/uploads/2015/07/iStock_000040849990_Large.jpg', 'name', 1);
 
 insert into product_entity_category_entity_list(product_entity_id, category_entity_list_id)
 values (1, 1);

@@ -39,6 +39,8 @@ public class ProductController {
     return ResponseEntity.created(location).build();
   }
 
+//  TODO make the CORS more specific for all methods
+  @CrossOrigin()
   @GetMapping("/product/{ID}")
   ProductEntity getProduct(@PathVariable Integer ID) {
     return productRepository.findById(ID).orElse(null);
