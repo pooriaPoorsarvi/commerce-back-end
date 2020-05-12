@@ -1,6 +1,8 @@
 package com.productions.ppt.commercebackend.app.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.productions.ppt.commercebackend.app.order.OrderEntity;
+import com.productions.ppt.commercebackend.app.product.ProductEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -29,6 +31,21 @@ public class UserEntity {
 
   @OneToMany(fetch = FetchType.LAZY)
   Set<OrderEntity> orderEntityList;
+
+  @JsonIgnore
+  @ManyToMany(fetch = FetchType.LAZY)
+  Set<ProductEntity> activeShoppingCart;
+
+
+
+
+  public Set<ProductEntity> getActiveShoppingCart() {
+    return activeShoppingCart;
+  }
+
+  public void setActiveShoppingCart(Set<ProductEntity> activeShoppingCart) {
+    this.activeShoppingCart = activeShoppingCart;
+  }
 
   public Integer getId() {
     return id;

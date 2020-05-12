@@ -24,6 +24,7 @@ public class ProductPurchaseEntity {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   double individualPriceAtPurchase = 0;
 
+//  TODO since the shopping cart is now integrated with the user check whether or not these presets are still needed
   @PostLoad
   @PrePersist
   void setUpInitPrice() {
