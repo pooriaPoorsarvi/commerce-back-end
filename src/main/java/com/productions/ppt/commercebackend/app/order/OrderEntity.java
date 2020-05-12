@@ -30,8 +30,7 @@ public class OrderEntity {
     @NotNull
     Integer finalised=0;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @OneToMany(fetch = FetchType.LAZY)
     private Set<ProductPurchaseEntity> productsPurchasedEntityList;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)

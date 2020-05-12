@@ -1,6 +1,8 @@
 package com.productions.ppt.commercebackend.app.product.purchase;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.productions.ppt.commercebackend.app.order.OrderEntity;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 
 import javax.persistence.*;
@@ -33,11 +35,24 @@ public class ProductPurchaseEntity {
     if (this.finalised == 0) this.individualPriceAtPurchase = this.productEntity.getPrice();
   }
 
+  @JsonIgnore
+  @ManyToOne
+  OrderEntity orderEntity;
+
+
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Integer count;
 
   public Integer getFinalised() {
     return finalised;
+  }
+
+  public OrderEntity getOrderEntity() {
+    return orderEntity;
+  }
+
+  public void setOrderEntity(OrderEntity orderEntity) {
+    this.orderEntity = orderEntity;
   }
 
   public void setFinalised(Integer finalised) {

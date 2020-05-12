@@ -53,34 +53,7 @@ public class OrderController {
     return ResponseEntity.created(location).build();
   }
 
-  @PostMapping("/orders/{ID}/add-product")
-  ResponseEntity<Object> addProducts(
-      @PathVariable Integer ID, @Valid @RequestBody ProductPurchaseEntity[] productPurchaseEntities) {
 
-    Optional<OrderEntity> orderEntityOptional = orderRepository.findById(ID);
-
-    if (!orderEntityOptional.isPresent() || orderEntityOptional.get().finalised != 0) {
-      throw new RuntimeException();
-    }
-
-    for (ProductPurchaseEntity productPurchaseEntity : productPurchaseEntities) {
-      if (productPurchaseRepository.findById(productPurchaseEntity.getId()).isPresent())
-        productPurchaseRepository.deleteById(productPurchaseEntity.getId());
-      this.productPurchaseRepository.save(productPurchaseEntity);
-    }
-
-    OrderEntity orderEntity = orderEntityOptional.get();
-    orderEntity
-        .getProductsPurchasedEntityList()
-        .addAll(new ArrayList<>(Arrays.asList(productPurchaseEntities)));
-    orderRepository.save(orderEntity);
-    URI location =
-        ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/{ID}")
-            .buildAndExpand(orderEntity.id)
-            .toUri();
-    return ResponseEntity.created(location).build();
-  }
 
   @PostMapping("/orders/{ID}/finalize")
   ResponseEntity<Object> finalise(@PathVariable Integer ID) {

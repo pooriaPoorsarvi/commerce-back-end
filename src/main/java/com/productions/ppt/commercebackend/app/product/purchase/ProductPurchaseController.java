@@ -1,5 +1,7 @@
 package com.productions.ppt.commercebackend.app.product.purchase;
 
+import com.productions.ppt.commercebackend.app.order.OrderEntity;
+import com.productions.ppt.commercebackend.app.order.OrderRepository;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
 import org.springframework.http.ResponseEntity;
@@ -14,24 +16,33 @@ public class ProductPurchaseController {
 
   ProductPurchaseRepository productPurchaseRepository;
   ProductRepository productRepository;
+  OrderRepository orderRepository;
 
   public ProductPurchaseController(
-      ProductPurchaseRepository productPurchaseRepository, ProductRepository productRepository) {
+      ProductPurchaseRepository productPurchaseRepository,
+      ProductRepository productRepository,
+      OrderRepository orderRepository) {
     this.productPurchaseRepository = productPurchaseRepository;
     this.productRepository = productRepository;
+    this.orderRepository = orderRepository;
   }
 
-  @PostMapping("/product-purchase/{productId}")
+  @PostMapping("/product-purchase/{productId}/{oderId}")
   ResponseEntity<Object> createProductPurchase(
-      @Valid @RequestBody Integer number, @PathVariable Integer productId) {
+      @Valid @RequestBody Integer number,
+      @PathVariable Integer productId,
+      @PathVariable Integer orderId) {
     ProductEntity productEntity = productRepository.findById(productId).orElse(null);
-    if (productEntity == null) {
-      throw new RuntimeException("product does not exist");
+    OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
+    if (productEntity == null || orderEntity == null) {
+      throw new RuntimeException("product or order does not exist");
     }
     ProductPurchaseEntity productPurchaseEntity = new ProductPurchaseEntity();
     productPurchaseEntity.setCount(number);
+    productPurchaseEntity.setOrderEntity(orderEntity);
     productPurchaseEntity.setProductEntity(productEntity);
     productPurchaseRepository.save(productPurchaseEntity);
+    orderRepository.save(orderEntity);
     URI location =
         ServletUriComponentsBuilder.fromUriString("/product-purchase")
             .path("/{ID}")
