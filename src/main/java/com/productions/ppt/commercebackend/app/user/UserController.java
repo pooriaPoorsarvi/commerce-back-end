@@ -37,7 +37,7 @@ public class UserController {
     UserEntity userEntity = opt.get();
     for (Integer productEntityId : productEntitiesIds) {
       if (!productRepository.findById(productEntityId).isPresent()) {
-        throw new RuntimeException();
+        throw new RuntimeException("Product not found");
       } else {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setId(productEntityId);
