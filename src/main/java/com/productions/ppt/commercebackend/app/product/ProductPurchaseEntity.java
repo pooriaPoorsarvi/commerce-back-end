@@ -3,60 +3,74 @@ package com.productions.ppt.commercebackend.app.product;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class ProductPurchaseEntity {
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Id
-    Integer id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  Integer id;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ManyToOne
-    ProductEntity productEntity;
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  @Column(columnDefinition = "INT  default '0'")
+  @NotNull
+  private Integer finalised = 0;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  @ManyToOne
+  ProductEntity productEntity;
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  double individualPriceAtPurchase = 0;
+
+  @PostLoad
+  @PrePersist
+  void setUpInitPrice() {
+    if (this.finalised == 0) this.individualPriceAtPurchase = this.productEntity.price;
+  }
+
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  private Integer count;
 
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    double priceAtPurchase = 0;
+  public Integer getFinalised() {
+    return finalised;
+  }
 
-    @PrePersist
-    void setUpInitPrice(){
-        this.priceAtPurchase = this.productEntity.price;
-    }
+  public void setFinalised(Integer finalised) {
+    this.finalised = finalised;
+  }
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Integer count;
+  public Integer getId() {
+    return id;
+  }
 
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public ProductEntity getProductEntity() {
+    return productEntity;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setProductEntity(ProductEntity productEntity) {
+    this.productEntity = productEntity;
+  }
 
-    public ProductEntity getProductEntity() {
-        return productEntity;
-    }
+  public double getIndividualPriceAtPurchase() {
+    return individualPriceAtPurchase;
+  }
 
-    public void setProductEntity(ProductEntity productEntity) {
-        this.productEntity = productEntity;
-    }
+  public void setIndividualPriceAtPurchase(double priceAtPurchase) {
+    this.individualPriceAtPurchase = priceAtPurchase;
+  }
 
-    public double getPriceAtPurchase() {
-        return priceAtPurchase;
-    }
+  public Integer getCount() {
+    return count;
+  }
 
-    public void setPriceAtPurchase(double priceAtPurchase) {
-        this.priceAtPurchase = priceAtPurchase;
-    }
-
-    public Integer getCount() {
-        return count;
-    }
-
-    public void setCount(Integer count) {
-        this.count = count;
-    }
+  public void setCount(Integer count) {
+    this.count = count;
+  }
 }

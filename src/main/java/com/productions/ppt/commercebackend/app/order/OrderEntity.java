@@ -26,9 +26,10 @@ public class OrderEntity {
     @Size(min = 1, max = 5000)
     String address;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Column(columnDefinition="INT  default '0'")
     @NotNull
-    Integer finalised;
+    Integer finalised=0;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JsonIgnore
@@ -38,9 +39,6 @@ public class OrderEntity {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     UserEntity owner;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Double prince = 0.0;
 
 
     public Integer getFinalised() {

@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.*;
@@ -26,7 +27,20 @@ public class OrderController {
   //    TODO : Implement 404 for all of the functions
   @GetMapping("/orders/{ID}")
   OrderEntity getOrder(@PathVariable Integer ID) {
-    return this.orderRepository.findById(ID).orElse(null);
+    Optional<OrderEntity> opt = orderRepository.findById(ID);
+    if (!opt.isPresent()) {
+      throw new RuntimeException();
+    }
+    return opt.get();
+  }
+
+  @GetMapping("/orders/{ID}/purchased-products")
+  Set<ProductPurchaseEntity> getOrderPurchasedProducts(@PathVariable Integer ID) {
+    Optional<OrderEntity> opt = orderRepository.findById(ID);
+    if (!opt.isPresent()) {
+      throw new RuntimeException();
+    }
+    return opt.get().getProductsPurchasedEntityList();
   }
 
   @PostMapping("/orders")
@@ -69,10 +83,17 @@ public class OrderController {
   }
 
   @PostMapping("/orders/{ID}/finalize")
-  ResponseEntity<Object> finalise() {
+  ResponseEntity<Object> finalise(@PathVariable Integer ID) {
     // TODO :   Finalize, add checks for finalising in other functions, add date here for finalising
     //    Also make this and the one in product and category which have the same pattern use a
     //    transaction
+    Optional<OrderEntity> opt = orderRepository.findById(ID);
+    if (!opt.isPresent()) {
+      throw new RuntimeException();
+    }
+    OrderEntity orderEntity = opt.get();
+    orderEntity.setFinalised(1);
+    orderRepository.save(orderEntity);
     return null;
   }
 }
