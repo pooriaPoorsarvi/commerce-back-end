@@ -25,6 +25,11 @@ public class ProductEntity {
   @Size(min = 1, max = 2000)
   String imageSrc;
 
+
+  @NotNull
+  @Column(columnDefinition="INT  default '0'")
+  Integer numberOfPurchases = 0;
+
   @ManyToMany(
       fetch = FetchType.LAZY,
       cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -77,6 +82,14 @@ public class ProductEntity {
 
   public void setImageSrc(String imageSrc) {
     this.imageSrc = imageSrc;
+  }
+
+  public Integer getNumberOfPurchases() {
+    return numberOfPurchases;
+  }
+
+  public void setNumberOfPurchases(Integer numberOfPurchases) {
+    this.numberOfPurchases = numberOfPurchases;
   }
 
   public ProductEntity() {}

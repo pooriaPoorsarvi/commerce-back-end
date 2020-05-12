@@ -22,13 +22,13 @@ public class ProductController {
     this.categoryRepository = categoryRepository;
   }
 
-  @GetMapping("/product/{ID}/categories")
+  @GetMapping("/products/{ID}/categories")
   Set<CategoryEntity> getCategories(@PathVariable Integer ID) {
     Optional<ProductEntity> p1 = productRepository.findById(ID);
     return p1.map(ProductEntity::getCategoryEntityList).orElse(null);
   }
 
-  @PostMapping("/product")
+  @PostMapping("/products")
   ResponseEntity<Object> createProduct(@Valid @RequestBody ProductEntity productEntity) {
     productRepository.save(productEntity);
     URI location =
@@ -41,8 +41,13 @@ public class ProductController {
 
 //  TODO make the CORS more specific for all methods
   @CrossOrigin()
-  @GetMapping("/product/{ID}")
+  @GetMapping("/products/{ID}")
   ProductEntity getProduct(@PathVariable Integer ID) {
     return productRepository.findById(ID).orElse(null);
+  }
+
+  @GetMapping("/products/discover")
+  ProductEntity[] getDiscoveryProducts(){
+    return null;
   }
 }
