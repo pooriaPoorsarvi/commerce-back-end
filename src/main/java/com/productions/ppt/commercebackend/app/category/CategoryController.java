@@ -35,8 +35,7 @@ public class CategoryController {
   @PostMapping("/category/{categoryID}/add/product/{productID}}")
   ResponseEntity<Object> addProductToCategory(
       @PathVariable Integer categoryID,
-      @PathVariable Integer productID,
-      @Valid @RequestBody Integer number) {
+      @PathVariable Integer productID) {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
     Optional<ProductEntity> productEntityOptional = productRepository.findById(productID);
 
