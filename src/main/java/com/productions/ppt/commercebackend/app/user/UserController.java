@@ -29,16 +29,18 @@ public class UserController {
 
   @PostMapping("/users/{ID}/shopping-cart-products")
   ResponseEntity<Object> addProductToShoppingCart(
-      @PathVariable Integer ID, @Valid @RequestBody ProductEntity[] productEntities) {
+      @PathVariable Integer ID, @Valid @RequestBody Integer[] productEntitiesIds) {
     Optional<UserEntity> opt = userRepository.findById(ID);
     if (!opt.isPresent()) {
       throw new RuntimeException();
     }
     UserEntity userEntity = opt.get();
-    for (ProductEntity productEntity : productEntities) {
-      if (!productRepository.findById(productEntity.getId()).isPresent()) {
+    for (Integer productEntityId : productEntitiesIds) {
+      if (!productRepository.findById(productEntityId).isPresent()) {
         throw new RuntimeException();
       } else {
+        ProductEntity productEntity = new ProductEntity();
+        productEntity.setId(productEntityId);
         userEntity.getActiveShoppingCart().add(productEntity);
       }
     }
