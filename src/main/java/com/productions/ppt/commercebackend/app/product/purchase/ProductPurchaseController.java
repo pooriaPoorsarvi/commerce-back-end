@@ -27,7 +27,7 @@ public class ProductPurchaseController {
     this.orderRepository = orderRepository;
   }
 
-  @PostMapping("/product-purchase/{productId}/{oderId}")
+  @PostMapping("/product-purchase/{productId}/{orderId}")
   ResponseEntity<Object> createProductPurchase(
       @Valid @RequestBody Integer number,
       @PathVariable Integer productId,
