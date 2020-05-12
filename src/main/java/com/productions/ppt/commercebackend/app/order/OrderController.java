@@ -1,13 +1,11 @@
 package com.productions.ppt.commercebackend.app.order;
 
-import com.productions.ppt.commercebackend.app.product.ProductEntity;
-import com.productions.ppt.commercebackend.app.product.ProductPurchaseEntity;
-import com.productions.ppt.commercebackend.app.product.ProductPurchaseRepository;
+import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
+import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.*;
@@ -57,7 +55,7 @@ public class OrderController {
 
   @PostMapping("/orders/{ID}/add-product")
   ResponseEntity<Object> addProducts(
-      @PathVariable Integer ID, @Valid @RequestBody ProductPurchaseEntity[] productEntities) {
+      @PathVariable Integer ID, @Valid @RequestBody ProductPurchaseEntity[] productPurchaseEntities) {
 
     Optional<OrderEntity> orderEntityOptional = orderRepository.findById(ID);
 
@@ -65,14 +63,16 @@ public class OrderController {
       throw new RuntimeException();
     }
 
-    for (ProductPurchaseEntity productEntity : productEntities) {
-      this.productPurchaseRepository.save(productEntity);
+    for (ProductPurchaseEntity productPurchaseEntity : productPurchaseEntities) {
+      if (productPurchaseRepository.findById(productPurchaseEntity.getId()).isPresent())
+        productPurchaseRepository.deleteById(productPurchaseEntity.getId());
+      this.productPurchaseRepository.save(productPurchaseEntity);
     }
 
     OrderEntity orderEntity = orderEntityOptional.get();
     orderEntity
         .getProductsPurchasedEntityList()
-        .addAll(new ArrayList<>(Arrays.asList(productEntities)));
+        .addAll(new ArrayList<>(Arrays.asList(productPurchaseEntities)));
     orderRepository.save(orderEntity);
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()

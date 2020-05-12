@@ -1,8 +1,6 @@
 package com.productions.ppt.commercebackend.app.category;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
-import com.productions.ppt.commercebackend.app.product.ProductPurchaseEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;

@@ -1,7 +1,7 @@
 package com.productions.ppt.commercebackend.app.category;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
-import com.productions.ppt.commercebackend.app.product.ProductPurchaseRepository;
+import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseRepository;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

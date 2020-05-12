@@ -1,6 +1,7 @@
-package com.productions.ppt.commercebackend.app.product;
+package com.productions.ppt.commercebackend.app.product.purchase;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.productions.ppt.commercebackend.app.product.ProductEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -24,16 +25,16 @@ public class ProductPurchaseEntity {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   double individualPriceAtPurchase = 0;
 
-//  TODO since the shopping cart is now integrated with the user check whether or not these presets are still needed
+  //  TODO since the shopping cart is now integrated with the user check whether or not these
+  // presets are still needed
   @PostLoad
   @PrePersist
   void setUpInitPrice() {
-    if (this.finalised == 0) this.individualPriceAtPurchase = this.productEntity.price;
+    if (this.finalised == 0) this.individualPriceAtPurchase = this.productEntity.getPrice();
   }
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   private Integer count;
-
 
   public Integer getFinalised() {
     return finalised;
@@ -72,6 +73,6 @@ public class ProductPurchaseEntity {
   }
 
   public void setCount(Integer count) {
-    this.count = count;
+    if (finalised == 0) this.count = count;
   }
 }

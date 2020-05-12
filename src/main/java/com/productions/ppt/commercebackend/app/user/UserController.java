@@ -1,17 +1,13 @@
 package com.productions.ppt.commercebackend.app.user;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
-import com.productions.ppt.commercebackend.app.product.ProductPurchaseEntity;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 
