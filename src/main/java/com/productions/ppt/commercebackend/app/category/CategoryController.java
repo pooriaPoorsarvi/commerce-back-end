@@ -74,6 +74,7 @@ public class CategoryController {
         });
   }
 
+  @CrossOrigin()
   @GetMapping("/categories/{ID}/products")
   Set<ProductEntity> getPro(@PathVariable Integer ID) {
     Optional<CategoryEntity> c = categoryRepository.findById(ID);

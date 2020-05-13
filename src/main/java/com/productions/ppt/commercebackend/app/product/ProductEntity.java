@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity
 public class ProductEntity {
 
-  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   Integer id;

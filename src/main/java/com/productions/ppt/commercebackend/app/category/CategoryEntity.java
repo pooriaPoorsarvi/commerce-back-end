@@ -1,6 +1,7 @@
 package com.productions.ppt.commercebackend.app.category;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.Set;
 @Entity
 public class CategoryEntity {
 
-  @JsonIgnore
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   Integer id;
