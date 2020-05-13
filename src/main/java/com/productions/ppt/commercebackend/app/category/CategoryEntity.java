@@ -21,7 +21,7 @@ public class CategoryEntity {
   @Size(min = 0, max = 2000)
   String imgSrc;
 
-
+  @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY)
   Set<ProductEntity> productEntities;
 

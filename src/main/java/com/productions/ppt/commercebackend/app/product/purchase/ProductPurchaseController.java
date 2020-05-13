@@ -4,12 +4,16 @@ import com.productions.ppt.commercebackend.app.order.OrderEntity;
 import com.productions.ppt.commercebackend.app.order.OrderRepository;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
+import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.net.URI;
 
 @RestController
@@ -28,11 +32,17 @@ public class ProductPurchaseController {
     this.orderRepository = orderRepository;
   }
 
-  @PostMapping("/product-purchase/{productId}/{orderId}")
+  @ApiOperation("Please make sure that the number that you are trying to add is positive.")
+  @PostMapping("/product-purchase/{productId}/{orderId}/{number}")
   ResponseEntity<Object> createProductPurchase(
-      @Valid @RequestBody Integer number,
+      @PathVariable Integer number,
       @PathVariable Integer productId,
       @PathVariable Integer orderId) {
+    if (number <= 0) {
+//      TODO  make sure that this number is less than the available products, and first reduce that
+      throw new BusinessErrorException(
+          "The number of products that are being bought was not positive.");
+    }
     ProductEntity productEntity =
         productRepository
             .findById(productId)
