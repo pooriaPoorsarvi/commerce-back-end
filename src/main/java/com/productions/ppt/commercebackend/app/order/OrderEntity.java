@@ -1,5 +1,6 @@
 package com.productions.ppt.commercebackend.app.order;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
 import com.productions.ppt.commercebackend.app.user.UserEntity;
@@ -12,29 +13,33 @@ import java.util.Set;
 
 @Entity
 public class OrderEntity {
-
+    
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Integer id;
 
-    @NotNull Date purchaseDate;
+    @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    Date purchaseDate;
 
     @NotNull Double amountPayed;
 
     @Size(min = 1, max = 5000)
     String address;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @Column(columnDefinition="INT  default '0'")
-    @NotNull
+    @JsonIgnore
+    @Column(columnDefinition="INT  default '0'", nullable = false)
     Integer finalised=0;
 
+
+    @JsonIgnore
     @OneToMany(fetch = FetchType.LAZY)
     private Set<ProductPurchaseEntity> productsPurchasedEntityList;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @NotNull
+
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
     UserEntity owner;
 
 
@@ -96,4 +101,6 @@ public class OrderEntity {
     }
     public OrderEntity() {
     }
+
+
 }

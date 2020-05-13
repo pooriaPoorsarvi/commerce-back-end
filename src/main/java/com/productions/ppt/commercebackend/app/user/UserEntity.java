@@ -29,6 +29,7 @@ public class UserEntity {
   @Column(unique = true)
   String email;
 
+  @JsonIgnore
   @OneToMany(fetch = FetchType.LAZY)
   Set<OrderEntity> orderEntityList;
 
