@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class ProductPurchaseEntity {
 
+  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   Integer id;

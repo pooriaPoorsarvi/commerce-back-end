@@ -10,6 +10,8 @@ import java.util.Set;
 
 @Entity
 public class ProductEntity {
+
+  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   Integer id;

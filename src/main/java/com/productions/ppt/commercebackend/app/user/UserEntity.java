@@ -13,7 +13,7 @@ import java.util.Set;
 public class UserEntity {
 
 //  TODO : add user password field and jwt
-
+  @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   Integer id;

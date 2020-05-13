@@ -13,7 +13,8 @@ import java.util.Set;
 
 @Entity
 public class OrderEntity {
-    
+
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     Integer id;
