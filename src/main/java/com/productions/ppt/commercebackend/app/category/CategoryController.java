@@ -84,6 +84,7 @@ public class CategoryController {
             });
   }
 
+  @CrossOrigin()
   @GetMapping("/categories")
   List<CategoryEntity> getAllCategories(){
     return categoryRepository.findAll();
