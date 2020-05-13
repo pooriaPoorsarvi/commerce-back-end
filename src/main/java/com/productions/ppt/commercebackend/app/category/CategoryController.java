@@ -3,6 +3,7 @@ package com.productions.ppt.commercebackend.app.category;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseRepository;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
+import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -16,6 +17,7 @@ import java.util.Set;
 public class CategoryController {
   CategoryRepository categoryRepository;
   ProductRepository productRepository;
+
   CategoryController(
       CategoryRepository categoryRepository,
       ProductRepository productRepository,
@@ -34,8 +36,7 @@ public class CategoryController {
 
   @PostMapping("/category/{categoryID}/add/product/{productID}}")
   ResponseEntity<Object> addProductToCategory(
-      @PathVariable Integer categoryID,
-      @PathVariable Integer productID) {
+      @PathVariable Integer categoryID, @PathVariable Integer productID) {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
     Optional<ProductEntity> productEntityOptional = productRepository.findById(productID);
 
@@ -62,12 +63,19 @@ public class CategoryController {
   @GetMapping("/category/{ID}")
   CategoryEntity createController(@PathVariable Integer ID) {
     Optional<CategoryEntity> c = categoryRepository.findById(ID);
-    return c.orElse(null);
+    return c.<EntityNotFoundInDBException>orElseThrow(
+        () -> {
+          throw new EntityNotFoundInDBException("Category not found.");
+        });
   }
 
   @GetMapping("/category/{ID}/products")
   Set<ProductEntity> getPro(@PathVariable Integer ID) {
     Optional<CategoryEntity> c = categoryRepository.findById(ID);
-    return c.map(CategoryEntity::getProductEntities).orElse(null);
+    return c.map(CategoryEntity::getProductEntities)
+        .<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("Category not found.");
+            });
   }
 }

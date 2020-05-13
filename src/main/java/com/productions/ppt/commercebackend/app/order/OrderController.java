@@ -2,6 +2,8 @@ package com.productions.ppt.commercebackend.app.order;
 
 import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
 import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseRepository;
+import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
+import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -53,8 +55,6 @@ public class OrderController {
     return ResponseEntity.created(location).build();
   }
 
-
-
   @PostMapping("/orders/{ID}/finalize")
   ResponseEntity<Object> finalise(@PathVariable Integer ID) {
     // TODO :   Finalize, add checks for finalising in other functions, add date here for finalising
@@ -62,11 +62,14 @@ public class OrderController {
     //    transaction
     Optional<OrderEntity> opt = orderRepository.findById(ID);
     if (!opt.isPresent()) {
-      throw new RuntimeException();
+      throw new EntityNotFoundInDBException("Order not found.");
     }
     OrderEntity orderEntity = opt.get();
+    if (orderEntity.getFinalised() != 0){
+      throw new BusinessErrorException("Order already finalised.");
+    }
     orderEntity.setFinalised(1);
     orderRepository.save(orderEntity);
-    return null;
+    return ResponseEntity.ok().build();
   }
 }
