@@ -4,6 +4,7 @@ import com.productions.ppt.commercebackend.app.order.OrderEntity;
 import com.productions.ppt.commercebackend.app.order.OrderRepository;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
+import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,11 +33,20 @@ public class ProductPurchaseController {
       @Valid @RequestBody Integer number,
       @PathVariable Integer productId,
       @PathVariable Integer orderId) {
-    ProductEntity productEntity = productRepository.findById(productId).orElse(null);
-    OrderEntity orderEntity = orderRepository.findById(orderId).orElse(null);
-    if (productEntity == null || orderEntity == null) {
-      throw new RuntimeException("product or order does not exist");
-    }
+    ProductEntity productEntity =
+        productRepository
+            .findById(productId)
+            .<EntityNotFoundInDBException>orElseThrow(
+                () -> {
+                  throw new EntityNotFoundInDBException("Product not found.");
+                });
+    OrderEntity orderEntity =
+        orderRepository
+            .findById(orderId)
+            .<EntityNotFoundInDBException>orElseThrow(
+                () -> {
+                  throw new EntityNotFoundInDBException("Order not found.");
+                });
     ProductPurchaseEntity productPurchaseEntity = new ProductPurchaseEntity();
     productPurchaseEntity.setCount(number);
     productPurchaseEntity.setOrderEntity(orderEntity);
@@ -53,22 +63,24 @@ public class ProductPurchaseController {
 
   @GetMapping("/product-purchase/{ID}")
   ProductPurchaseEntity getProductPurchase(@PathVariable Integer ID) {
-    ProductPurchaseEntity productPurchaseEntity =
-        productPurchaseRepository.findById(ID).orElse(null);
-    if (productPurchaseEntity == null) {
-      throw new RuntimeException("product does not exist");
-    }
-    return productPurchaseEntity;
+    return productPurchaseRepository
+        .findById(ID)
+        .<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("Product not found.");
+            });
   }
 
   @PostMapping("/product-purchase/{ID}/update-count")
   ResponseEntity<Object> updateCount(
       @PathVariable Integer ID, @Valid @RequestBody Integer newCount) {
     ProductPurchaseEntity productPurchaseEntity =
-        productPurchaseRepository.findById(ID).orElse(null);
-    if (productPurchaseEntity == null) {
-      throw new RuntimeException("product does not exist");
-    }
+        productPurchaseRepository
+            .findById(ID)
+            .<EntityNotFoundInDBException>orElseThrow(
+                () -> {
+                  throw new EntityNotFoundInDBException("Product Purchase not found.");
+                });
     if (productPurchaseEntity.getFinalised() == 0) {
       if (newCount <= 0) {
         productPurchaseRepository.deleteById(ID);

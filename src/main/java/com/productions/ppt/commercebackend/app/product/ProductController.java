@@ -2,6 +2,7 @@ package com.productions.ppt.commercebackend.app.product;
 
 import com.productions.ppt.commercebackend.app.category.CategoryEntity;
 import com.productions.ppt.commercebackend.app.category.CategoryRepository;
+import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,7 +26,10 @@ public class ProductController {
   @GetMapping("/products/{ID}/categories")
   Set<CategoryEntity> getCategories(@PathVariable Integer ID) {
     Optional<ProductEntity> p1 = productRepository.findById(ID);
-    return p1.map(ProductEntity::getCategoryEntityList).orElse(null);
+    return p1.map(ProductEntity::getCategoryEntityList).<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("Product not found.");
+            });
   }
 
   @PostMapping("/products")
@@ -39,15 +43,20 @@ public class ProductController {
     return ResponseEntity.created(location).build();
   }
 
-//  TODO make the CORS more specific for all methods
+  //  TODO make the CORS more specific for all methods
   @CrossOrigin()
   @GetMapping("/products/{ID}")
   ProductEntity getProduct(@PathVariable Integer ID) {
-    return productRepository.findById(ID).orElse(null);
+    return productRepository
+        .findById(ID)
+        .<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("Product not found.");
+            });
   }
 
   @GetMapping("/products/discover")
-  ProductEntity[] getDiscoveryProducts(){
+  ProductEntity[] getDiscoveryProducts() {
     return null;
   }
 }
