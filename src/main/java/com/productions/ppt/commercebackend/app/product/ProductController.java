@@ -59,6 +59,7 @@ public class ProductController {
             });
   }
 
+  @CrossOrigin()
   @GetMapping("/products/discover")
   Stream<ProductEntity> getDiscoveryProducts() {
     //    TODO add error if there are not enough products
