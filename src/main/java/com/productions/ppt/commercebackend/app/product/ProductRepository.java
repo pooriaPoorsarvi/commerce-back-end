@@ -21,5 +21,4 @@ public interface ProductRepository
   @Override
   Page<ProductEntity> findAll(Pageable pageable);
 
-  List<ProductEntity> findAllByNumberOfPurchases(Integer numberOfPurchases, Pageable pageable);
 }

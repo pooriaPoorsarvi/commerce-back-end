@@ -1,6 +1,7 @@
 package com.productions.ppt.commercebackend.app.product;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.productions.ppt.commercebackend.app.category.CategoryEntity;
 
 import javax.persistence.*;
@@ -28,8 +29,8 @@ public class ProductEntity {
   String imageSrc;
 
 
-  @NotNull
-  @Column(columnDefinition="INT  default '0'")
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  @Column(columnDefinition="INT  default '0'", nullable = false)
   Integer numberOfPurchases = 0;
 
   @ManyToMany(
