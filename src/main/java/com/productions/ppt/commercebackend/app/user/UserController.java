@@ -36,14 +36,16 @@ public class UserController {
   @PostMapping("/users/{ID}/shopping-cart-products")
   ResponseEntity<Object> addProductToShoppingCart(
       @PathVariable Integer ID, @Valid @RequestBody Integer[] productEntitiesIds) {
-    Optional<UserEntity> opt = userRepository.findById(ID);
-    if (!opt.isPresent()) {
-      throw new RuntimeException();
-    }
-    UserEntity userEntity = opt.get();
+    UserEntity userEntity =
+        userRepository
+            .findById(ID)
+            .<EntityNotFoundInDBException>orElseThrow(
+                () -> {
+                  throw new EntityNotFoundInDBException("user not found.");
+                });
     for (Integer productEntityId : productEntitiesIds) {
       if (!productRepository.findById(productEntityId).isPresent()) {
-        throw new RuntimeException("Product not found");
+        throw new EntityNotFoundInDBException("Product not found.");
       } else {
         ProductEntity productEntity = new ProductEntity();
         productEntity.setId(productEntityId);
@@ -61,10 +63,12 @@ public class UserController {
 
   @GetMapping("/users/{ID}/shopping-cart-products")
   Set<ProductEntity> getShoppingCart(@PathVariable Integer ID) {
-    Optional<UserEntity> opt = userRepository.findById(ID);
-    if (!opt.isPresent()) {
-      throw new RuntimeException("User not found");
-    }
-    return opt.get().getActiveShoppingCart();
+    return userRepository
+        .findById(ID)
+        .map(UserEntity::getActiveShoppingCart)
+        .<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("User not found.");
+            });
   }
 }
