@@ -1,5 +1,8 @@
 insert into category_entity
-values (1, 'image src', 'name');
+values (1, 'image src', 'category 1'),
+(2, 'image src', 'category 2'),
+(3, 'image src', 'category 3');
+
 
 insert into product_entity (id, description, image_src, name, price, number_of_purchases)
 values (1,

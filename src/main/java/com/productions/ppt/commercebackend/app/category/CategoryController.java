@@ -10,6 +10,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -26,7 +27,7 @@ public class CategoryController {
     this.productRepository = productRepository;
   }
 
-  @PostMapping("/category")
+  @PostMapping("/categories")
   ResponseEntity<Object> createController(@Valid @RequestBody CategoryEntity c) {
     categoryRepository.save(c);
     URI location =
@@ -34,7 +35,7 @@ public class CategoryController {
     return ResponseEntity.created(location).build();
   }
 
-  @PostMapping("/category/{categoryID}/add/product/{productID}}")
+  @PostMapping("/categories/{categoryID}/add/product/{productID}}")
   ResponseEntity<Object> addProductToCategory(
       @PathVariable Integer categoryID, @PathVariable Integer productID) {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
@@ -64,7 +65,7 @@ public class CategoryController {
     return ResponseEntity.created(location).build();
   }
 
-  @GetMapping("/category/{ID}")
+  @GetMapping("/categories/{ID}")
   CategoryEntity createController(@PathVariable Integer ID) {
     Optional<CategoryEntity> c = categoryRepository.findById(ID);
     return c.<EntityNotFoundInDBException>orElseThrow(
@@ -73,7 +74,7 @@ public class CategoryController {
         });
   }
 
-  @GetMapping("/category/{ID}/products")
+  @GetMapping("/categories/{ID}/products")
   Set<ProductEntity> getPro(@PathVariable Integer ID) {
     Optional<CategoryEntity> c = categoryRepository.findById(ID);
     return c.map(CategoryEntity::getProductEntities)
@@ -82,4 +83,10 @@ public class CategoryController {
               throw new EntityNotFoundInDBException("Category not found.");
             });
   }
+
+  @GetMapping("/categories")
+  List<CategoryEntity> getAllCategories(){
+    return categoryRepository.findAll();
+  }
+
 }
