@@ -2,6 +2,7 @@ package com.productions.ppt.commercebackend.app.user;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
+import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -24,7 +25,12 @@ public class UserController {
 
   @GetMapping("users/{ID}")
   UserEntity getUser(@PathVariable Integer ID) {
-    return this.userRepository.findById(ID).orElse(null);
+    return this.userRepository
+        .findById(ID)
+        .<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("User not found.");
+            });
   }
 
   @PostMapping("/users/{ID}/shopping-cart-products")
