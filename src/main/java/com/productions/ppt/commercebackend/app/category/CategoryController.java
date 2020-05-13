@@ -40,8 +40,12 @@ public class CategoryController {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
     Optional<ProductEntity> productEntityOptional = productRepository.findById(productID);
 
-    if (!(categoryEntityOptional.isPresent() && productEntityOptional.isPresent())) {
-      return null;
+    if (categoryEntityOptional.isPresent()) {
+      throw new EntityNotFoundInDBException("Category not found.");
+    }
+
+    if (productEntityOptional.isPresent()) {
+      throw new EntityNotFoundInDBException("Product not found.");
     }
 
     ProductEntity productEntity = productEntityOptional.get();
