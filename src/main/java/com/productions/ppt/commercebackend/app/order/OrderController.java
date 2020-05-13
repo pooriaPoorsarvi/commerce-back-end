@@ -27,20 +27,23 @@ public class OrderController {
   //    TODO : Implement 404 for all of the functions
   @GetMapping("/orders/{ID}")
   OrderEntity getOrder(@PathVariable Integer ID) {
-    Optional<OrderEntity> opt = orderRepository.findById(ID);
-    if (!opt.isPresent()) {
-      throw new RuntimeException();
-    }
-    return opt.get();
+    return orderRepository
+        .findById(ID)
+        .<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("Order not found.");
+            });
   }
 
   @GetMapping("/orders/{ID}/purchased-products")
   Set<ProductPurchaseEntity> getOrderPurchasedProducts(@PathVariable Integer ID) {
-    Optional<OrderEntity> opt = orderRepository.findById(ID);
-    if (!opt.isPresent()) {
-      throw new RuntimeException();
-    }
-    return opt.get().getProductsPurchasedEntityList();
+    return orderRepository
+        .findById(ID)
+        .map(OrderEntity::getProductsPurchasedEntityList)
+        .<EntityNotFoundInDBException>orElseThrow(
+            () -> {
+              throw new EntityNotFoundInDBException("Order not found.");
+            });
   }
 
   @PostMapping("/orders")
@@ -65,7 +68,7 @@ public class OrderController {
       throw new EntityNotFoundInDBException("Order not found.");
     }
     OrderEntity orderEntity = opt.get();
-    if (orderEntity.getFinalised() != 0){
+    if (orderEntity.getFinalised() != 0) {
       throw new BusinessErrorException("Order already finalised.");
     }
     orderEntity.setFinalised(1);
