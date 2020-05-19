@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity
 public class UserEntity {
 
-//  TODO : add user password field and jwt
+  //  TODO : add user password field and jwt
   @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
@@ -29,6 +29,9 @@ public class UserEntity {
   @Column(unique = true)
   String email;
 
+  @Size(min = 5, max = 500)
+  private String password;
+
   @JsonIgnore
   @OneToMany(fetch = FetchType.LAZY)
   Set<OrderEntity> orderEntityList;
@@ -37,8 +40,69 @@ public class UserEntity {
   @ManyToMany(fetch = FetchType.LAZY)
   Set<ProductEntity> activeShoppingCart;
 
+  @Column(nullable = false, columnDefinition="INT  default '1'")
+  private boolean isEnabled = true;
+
+  @Column(nullable = false, columnDefinition="INT  default '1'")
+  private boolean isCredentialsNonExpired = true;
+
+  @Column(nullable = false, columnDefinition="INT  default '1'")
+  private boolean isAccountNonLocked = true;
+
+  @Column(nullable = false, columnDefinition="INT  default '1'")
+  private boolean isAccountExpired = true;
+
+  @ManyToMany(fetch = FetchType.EAGER)
+  Set<Role> roles;
 
 
+  public Set<Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(Set<Role> roles) {
+    this.roles = roles;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  public boolean isEnabled() {
+    return isEnabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    isEnabled = enabled;
+  }
+
+  public boolean isCredentialsNonExpired() {
+    return isCredentialsNonExpired;
+  }
+
+  public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+    isCredentialsNonExpired = credentialsNonExpired;
+  }
+
+  public boolean isAccountNonLocked() {
+    return isAccountNonLocked;
+  }
+
+  public void setAccountNonLocked(boolean accountNonLocked) {
+    isAccountNonLocked = accountNonLocked;
+  }
+
+  public boolean isAccountExpired() {
+    return isAccountExpired;
+  }
+
+  public void setAccountExpired(boolean accountExpired) {
+    isAccountExpired = accountExpired;
+  }
 
   public Set<ProductEntity> getActiveShoppingCart() {
     return activeShoppingCart;

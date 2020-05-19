@@ -23,7 +23,7 @@ public class CategoryEntity {
   String imgSrc;
 
   @JsonIgnore
-  @ManyToMany(fetch = FetchType.LAZY)
+  @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categoryEntityList")
   Set<ProductEntity> productEntities;
 
   public Set<ProductEntity> getProductEntities() {
