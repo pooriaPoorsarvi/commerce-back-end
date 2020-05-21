@@ -1,7 +1,8 @@
-package com.productions.ppt.commercebackend.filters;
+package com.productions.ppt.commercebackend.config.filters;
 
 import com.productions.ppt.commercebackend.app.user.GeneralUserDetailsService;
 import com.productions.ppt.commercebackend.shared.utils.JWTUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,8 +28,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     this.jwtUtil = jwtUtil;
   }
 
-  @Override
-  protected void doFilterInternal(
+  void validateJWT(
       HttpServletRequest httpServletRequest,
       HttpServletResponse httpServletResponse,
       FilterChain filterChain)
@@ -58,5 +58,21 @@ public class JWTRequestFilter extends OncePerRequestFilter {
       }
     }
     filterChain.doFilter(httpServletRequest, httpServletResponse);
+  }
+
+  @Override
+  protected void doFilterInternal(
+      HttpServletRequest httpServletRequest,
+      HttpServletResponse httpServletResponse,
+      FilterChain filterChain)
+      throws ServletException, IOException {
+    try {
+      validateJWT(httpServletRequest, httpServletResponse, filterChain);
+      //          TODO make the exception more specific
+    } catch (Exception e) {
+//        TODO make this into a class in the future
+      httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
+      httpServletResponse.getWriter().write("Bad JWT was received.");
+    }
   }
 }
