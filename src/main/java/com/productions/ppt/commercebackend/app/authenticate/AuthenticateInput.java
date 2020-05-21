@@ -1,7 +1,13 @@
 package com.productions.ppt.commercebackend.app.authenticate;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 public class AuthenticateInput {
+
+    @NotNull
     String email;
+    @NotNull
     String password;
 
     public AuthenticateInput() {

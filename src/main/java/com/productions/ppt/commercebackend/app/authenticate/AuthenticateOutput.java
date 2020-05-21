@@ -1,7 +1,10 @@
 package com.productions.ppt.commercebackend.app.authenticate;
 
+import javax.validation.constraints.NotNull;
+
 public class AuthenticateOutput {
 
+    @NotNull
     String jwt;
 
     public AuthenticateOutput(String jwt) {

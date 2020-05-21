@@ -19,9 +19,14 @@ public class SpringBootSecurityConfiguration extends WebSecurityConfigurerAdapte
     this.generalUserDetailsService = generalUserDetailsService;
   }
 
+//  TODO delete unnecessary crossOrigin annotations
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
+    http.csrf()
+        .disable()
+        .cors()
+        .and()
+        .authorizeRequests()
         .antMatchers("/users/**")
         .authenticated()
         .antMatchers("/authenticate")
