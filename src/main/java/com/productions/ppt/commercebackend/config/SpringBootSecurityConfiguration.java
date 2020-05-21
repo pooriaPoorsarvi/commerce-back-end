@@ -13,33 +13,38 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 public class SpringBootSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    GeneralUserDetailsService generalUserDetailsService;
+  GeneralUserDetailsService generalUserDetailsService;
 
-    SpringBootSecurityConfiguration(GeneralUserDetailsService generalUserDetailsService){
-        this.generalUserDetailsService = generalUserDetailsService;
-    }
+  SpringBootSecurityConfiguration(GeneralUserDetailsService generalUserDetailsService) {
+    this.generalUserDetailsService = generalUserDetailsService;
+  }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().
-                antMatchers("/users/**").authenticated().
-                    antMatchers("/**").permitAll().and().formLogin();
-    }
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.authorizeRequests()
+        .antMatchers("/users/**")
+        .authenticated()
+        .antMatchers("/authenticate")
+        .permitAll()
+        .antMatchers("/**")
+        .permitAll()
+        .and()
+        .formLogin();
+  }
 
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(generalUserDetailsService);
-    }
+  @Override
+  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    auth.userDetailsService(generalUserDetailsService);
+  }
 
-    @Bean
-    public PasswordEncoder getPasswordEncoder(){
-        return NoOpPasswordEncoder.getInstance();
-    }
+  @Bean
+  public PasswordEncoder getPasswordEncoder() {
+    return NoOpPasswordEncoder.getInstance();
+  }
 
-
-    @Bean
-    @Override
-    protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
-    }
+  @Bean
+  @Override
+  protected AuthenticationManager authenticationManager() throws Exception {
+    return super.authenticationManager();
+  }
 }
