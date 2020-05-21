@@ -13,6 +13,8 @@ import java.util.function.Function;
 
 @Service
 public class JWTUtil {
+//  TODO set the secret in the cloud
+//  TODO set the timer more dynamically
   private String SECRET_KEY = "secret";
 
   public String extractUsername(String token) {

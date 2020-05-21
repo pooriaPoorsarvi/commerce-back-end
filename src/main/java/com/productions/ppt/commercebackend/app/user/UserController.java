@@ -2,8 +2,10 @@ package com.productions.ppt.commercebackend.app.user;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.ProductRepository;
+import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -17,10 +19,15 @@ public class UserController {
 
   UserRepository userRepository;
   ProductRepository productRepository;
+  PasswordEncoder passwordEncoder;
 
-  public UserController(UserRepository userRepository, ProductRepository productRepository) {
+  public UserController(
+      UserRepository userRepository,
+      ProductRepository productRepository,
+      PasswordEncoder passwordEncoder) {
     this.userRepository = userRepository;
     this.productRepository = productRepository;
+    this.passwordEncoder = passwordEncoder;
   }
 
   @GetMapping("users/{ID}")
@@ -31,6 +38,22 @@ public class UserController {
             () -> {
               throw new EntityNotFoundInDBException("User not found.");
             });
+  }
+
+  @PostMapping("users")
+  ResponseEntity<?> addUser(@Valid @RequestBody UserSignUpInput userSignUpInput) {
+    UserEntity userEntity = new UserEntity();
+    if (userRepository.findByEmail(userSignUpInput.email).isPresent()) {
+      throw new BusinessErrorException("Email already exists");
+    }
+    userEntity.setEmail(userSignUpInput.email);
+    userEntity.setPassword(passwordEncoder.encode(userSignUpInput.password));
+    userEntity.setAccountExpired(false);
+    userEntity.setAccountNonLocked(true);
+    userEntity.setCredentialsNonExpired(true);
+    userEntity.setEnabled(true);
+    userRepository.save(userEntity);
+    return ResponseEntity.ok(userEntity.id);
   }
 
   @PostMapping("/users/{ID}/shopping-cart-products")

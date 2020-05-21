@@ -2,6 +2,10 @@ package com.productions.ppt.commercebackend.config.filters;
 
 import com.productions.ppt.commercebackend.app.user.GeneralUserDetailsService;
 import com.productions.ppt.commercebackend.shared.utils.JWTUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,6 +44,7 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     String jwt = null;
 
     if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+      System.out.println("JWT : " + authorizationHeader.substring(7));
       jwt = authorizationHeader.substring(7);
       username = jwtUtil.extractUsername(jwt);
     }
@@ -68,9 +73,13 @@ public class JWTRequestFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
     try {
       validateJWT(httpServletRequest, httpServletResponse, filterChain);
-      //          TODO make the exception more specific
-    } catch (Exception e) {
-//        TODO make this into a class in the future
+      //          TODO make the exception more specific : check if you need to add
+      // IllegalArgumentException as well
+    } catch (ExpiredJwtException
+        | UnsupportedJwtException
+        | MalformedJwtException
+        | SignatureException e) {
+      //        TODO make this into a class in the future
       httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
       httpServletResponse.getWriter().write("Bad JWT was received.");
     }
