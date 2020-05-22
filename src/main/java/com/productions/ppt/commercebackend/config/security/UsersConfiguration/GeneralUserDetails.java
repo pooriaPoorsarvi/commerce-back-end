@@ -1,5 +1,7 @@
-package com.productions.ppt.commercebackend.app.user;
+package com.productions.ppt.commercebackend.config.security.UsersConfiguration;
 
+import com.productions.ppt.commercebackend.app.user.models.Role;
+import com.productions.ppt.commercebackend.app.user.models.UserEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,8 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
-public class GeneralUserDetails implements UserDetails {
+class GeneralUserDetails implements UserDetails {
 
   private boolean isEnabled;
   private boolean isCredentialsNonExpired;

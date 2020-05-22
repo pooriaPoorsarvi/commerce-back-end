@@ -1,7 +1,7 @@
 package com.productions.ppt.commercebackend.app.product;
 
 import com.productions.ppt.commercebackend.app.category.CategoryEntity;
-import com.productions.ppt.commercebackend.app.category.CategoryRepository;
+import com.productions.ppt.commercebackend.app.category.CategoryService;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -16,14 +16,14 @@ import java.util.Set;
 import java.util.stream.Stream;
 
 @RestController
-public class ProductController {
+class ProductController {
   ProductRepository productRepository;
-  CategoryRepository categoryRepository;
+  CategoryService categoryService;
 
   public ProductController(
-      ProductRepository productRepository, CategoryRepository categoryRepository) {
+      ProductRepository productRepository, CategoryService categoryService) {
     this.productRepository = productRepository;
-    this.categoryRepository = categoryRepository;
+    this.categoryService = categoryService;
   }
 
   @GetMapping("/products/{ID}/categories")
@@ -42,7 +42,7 @@ public class ProductController {
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{ID}")
-            .buildAndExpand(productEntity.id)
+            .buildAndExpand(productEntity.getId())
             .toUri();
     return ResponseEntity.created(location).build();
   }

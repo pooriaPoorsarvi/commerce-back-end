@@ -1,6 +1,6 @@
 package com.productions.ppt.commercebackend.app.authenticate;
 
-import com.productions.ppt.commercebackend.app.user.GeneralUserDetailsService;
+import com.productions.ppt.commercebackend.config.security.UsersConfiguration.GeneralUserDetailsService;
 import com.productions.ppt.commercebackend.exceptions.AuthenticationError;
 import com.productions.ppt.commercebackend.shared.utils.JWTUtil;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-public class AuthenticateController {
+class AuthenticateController {
 
   AuthenticationManager authenticationManager;
   GeneralUserDetailsService generalUserDetailsService;

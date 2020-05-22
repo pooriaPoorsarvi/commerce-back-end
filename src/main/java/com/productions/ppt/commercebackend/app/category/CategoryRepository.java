@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CategoryRepository extends JpaRepository<CategoryEntity, Integer> {
+interface CategoryRepository extends JpaRepository<CategoryEntity, Integer> {
     @Override
     Optional<CategoryEntity> findById(Integer id);
     List<CategoryEntity> findAll();

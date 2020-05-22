@@ -14,17 +14,17 @@ public class CategoryEntity {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
-  Integer id;
+  private Integer id;
 
   @Size(min = 1, max = 1000)
-  String name;
+  private String name;
 
   @Size(min = 0, max = 2000)
-  String imgSrc;
+  private String imgSrc;
 
   @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categoryEntityList")
-  Set<ProductEntity> productEntities;
+  private Set<ProductEntity> productEntities;
 
   public Set<ProductEntity> getProductEntities() {
     return productEntities;

@@ -1,35 +1,33 @@
 package com.productions.ppt.commercebackend.app.product.purchase;
 
 import com.productions.ppt.commercebackend.app.order.OrderEntity;
-import com.productions.ppt.commercebackend.app.order.OrderRepository;
+import com.productions.ppt.commercebackend.app.order.OrderService;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
-import com.productions.ppt.commercebackend.app.product.ProductRepository;
+import com.productions.ppt.commercebackend.app.product.ProductService;
 import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Positive;
 import java.net.URI;
 
 @RestController
-public class ProductPurchaseController {
+class ProductPurchaseController {
 
   ProductPurchaseRepository productPurchaseRepository;
-  ProductRepository productRepository;
-  OrderRepository orderRepository;
+  ProductService productService;
+  OrderService orderService;
 
   public ProductPurchaseController(
       ProductPurchaseRepository productPurchaseRepository,
-      ProductRepository productRepository,
-      OrderRepository orderRepository) {
+      ProductService productService,
+      OrderService orderService) {
     this.productPurchaseRepository = productPurchaseRepository;
-    this.productRepository = productRepository;
-    this.orderRepository = orderRepository;
+    this.productService = productService;
+    this.orderService = orderService;
   }
 
   @ApiOperation("Please make sure that the number that you are trying to add is positive.")
@@ -44,14 +42,14 @@ public class ProductPurchaseController {
           "The number of products that are being bought was not positive.");
     }
     ProductEntity productEntity =
-        productRepository
+        productService
             .findById(productId)
             .<EntityNotFoundInDBException>orElseThrow(
                 () -> {
                   throw new EntityNotFoundInDBException("Product not found.");
                 });
     OrderEntity orderEntity =
-        orderRepository
+        orderService
             .findById(orderId)
             .<EntityNotFoundInDBException>orElseThrow(
                 () -> {
@@ -62,11 +60,11 @@ public class ProductPurchaseController {
     productPurchaseEntity.setOrderEntity(orderEntity);
     productPurchaseEntity.setProductEntity(productEntity);
     productPurchaseRepository.save(productPurchaseEntity);
-    orderRepository.save(orderEntity);
+    orderService.save(orderEntity);
     URI location =
         ServletUriComponentsBuilder.fromUriString("/product-purchase")
             .path("/{ID}")
-            .buildAndExpand(productPurchaseEntity.id)
+            .buildAndExpand(productPurchaseEntity.getId())
             .toUri();
     return ResponseEntity.created(location).build();
   }
@@ -104,7 +102,7 @@ public class ProductPurchaseController {
     URI location =
         ServletUriComponentsBuilder.fromUriString("/product-purchase")
             .path("/{ID}")
-            .buildAndExpand(productPurchaseEntity.id)
+            .buildAndExpand(productPurchaseEntity.getId())
             .toUri();
     return ResponseEntity.created(location).build();
   }

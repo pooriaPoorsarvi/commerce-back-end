@@ -1,6 +1,6 @@
-package com.productions.ppt.commercebackend.config;
+package com.productions.ppt.commercebackend.config.security;
 
-import com.productions.ppt.commercebackend.app.user.GeneralUserDetailsService;
+import com.productions.ppt.commercebackend.config.security.UsersConfiguration.GeneralUserDetailsService;
 import com.productions.ppt.commercebackend.config.filters.JWTRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 

@@ -1,8 +1,7 @@
 package com.productions.ppt.commercebackend.app.category;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
-import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseRepository;
-import com.productions.ppt.commercebackend.app.product.ProductRepository;
+import com.productions.ppt.commercebackend.app.product.ProductService;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,23 +14,22 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-public class CategoryController {
+class CategoryController {
   CategoryRepository categoryRepository;
-  ProductRepository productRepository;
+  ProductService productService;
 
   CategoryController(
       CategoryRepository categoryRepository,
-      ProductRepository productRepository,
-      ProductPurchaseRepository productPurchaseRepository) {
+      ProductService productService) {
     this.categoryRepository = categoryRepository;
-    this.productRepository = productRepository;
+    this.productService = productService;
   }
 
   @PostMapping("/categories")
   ResponseEntity<Object> createController(@Valid @RequestBody CategoryEntity c) {
     categoryRepository.save(c);
     URI location =
-        ServletUriComponentsBuilder.fromCurrentRequest().path("/{ID}").buildAndExpand(c.id).toUri();
+        ServletUriComponentsBuilder.fromCurrentRequest().path("/{ID}").buildAndExpand(c.getId()).toUri();
     return ResponseEntity.created(location).build();
   }
 
@@ -39,7 +37,7 @@ public class CategoryController {
   ResponseEntity<Object> addProductToCategory(
       @PathVariable Integer categoryID, @PathVariable Integer productID) {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
-    Optional<ProductEntity> productEntityOptional = productRepository.findById(productID);
+    Optional<ProductEntity> productEntityOptional = productService.findById(productID);
 
     if (categoryEntityOptional.isPresent()) {
       throw new EntityNotFoundInDBException("Category not found.");
@@ -56,11 +54,11 @@ public class CategoryController {
     productEntity.getCategoryEntityList().add(categoryEntity);
 
     categoryRepository.save(categoryEntity);
-    productRepository.save(productEntity);
+    productService.save(productEntity);
 
     URI location =
         ServletUriComponentsBuilder.fromPath("/category/{categoryID}")
-            .buildAndExpand(categoryEntity.id)
+            .buildAndExpand(categoryEntity.getId())
             .toUri();
     return ResponseEntity.created(location).build();
   }

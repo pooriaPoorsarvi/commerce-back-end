@@ -3,7 +3,7 @@ package com.productions.ppt.commercebackend.app.order;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
-import com.productions.ppt.commercebackend.app.user.UserEntity;
+import com.productions.ppt.commercebackend.app.user.models.UserEntity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -17,20 +17,20 @@ public class OrderEntity {
     @JsonIgnore
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    Integer id;
+    private Integer id;
 
     @Column(nullable = false)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Date purchaseDate;
+    private Date purchaseDate;
 
     @NotNull Double amountPayed;
 
     @Size(min = 1, max = 5000)
-    String address;
+    private String address;
 
     @JsonIgnore
     @Column(columnDefinition="INT  default '0'", nullable = false)
-    Integer finalised=0;
+    private Integer finalised=0;
 
 
     @JsonIgnore
@@ -41,7 +41,7 @@ public class OrderEntity {
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    UserEntity owner;
+    private UserEntity owner;
 
 
     public Integer getFinalised() {

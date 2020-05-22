@@ -14,7 +14,7 @@ public class ProductPurchaseEntity {
   @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
-  Integer id;
+  private Integer id;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Column(columnDefinition = "INT  default '0'")
@@ -23,22 +23,22 @@ public class ProductPurchaseEntity {
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @ManyToOne
-  ProductEntity productEntity;
+  private ProductEntity productEntity;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  double individualPriceAtPurchase = 0;
+  private double individualPriceAtPurchase = 0;
 
   //  TODO since the shopping cart is now integrated with the user check whether or not these
   // presets are still needed
   @PostLoad
   @PrePersist
-  void setUpInitPrice() {
+  private void setUpInitPrice() {
     if (this.finalised == 0) this.individualPriceAtPurchase = this.productEntity.getPrice();
   }
 
   @JsonIgnore
   @ManyToOne
-  OrderEntity orderEntity;
+  private OrderEntity orderEntity;
 
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)

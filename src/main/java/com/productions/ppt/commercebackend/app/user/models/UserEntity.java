@@ -1,4 +1,4 @@
-package com.productions.ppt.commercebackend.app.user;
+package com.productions.ppt.commercebackend.app.user.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.productions.ppt.commercebackend.app.order.OrderEntity;
@@ -16,45 +16,44 @@ public class UserEntity {
   @JsonIgnore
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
-  Integer id;
+  private Integer id;
 
   @Size(min = 1, max = 100)
-  String firstName;
+  private String firstName;
 
   @Size(min = 1, max = 500)
-  String lastName;
+  private String lastName;
 
   @Email
   @Size(min = 5, max = 500)
   @Column(unique = true)
-  String email;
+  private String email;
 
   @Size(min = 5, max = 500)
   private String password;
 
   @JsonIgnore
   @OneToMany(fetch = FetchType.LAZY)
-  Set<OrderEntity> orderEntityList;
+  private Set<OrderEntity> orderEntityList;
 
   @JsonIgnore
   @ManyToMany(fetch = FetchType.LAZY)
-  Set<ProductEntity> activeShoppingCart;
+  private Set<ProductEntity> activeShoppingCart;
 
-  @Column(nullable = false, columnDefinition="INT  default '1'")
+  @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isEnabled = true;
 
-  @Column(nullable = false, columnDefinition="INT  default '1'")
+  @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isCredentialsNonExpired = true;
 
-  @Column(nullable = false, columnDefinition="INT  default '1'")
+  @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isAccountNonLocked = true;
 
-  @Column(nullable = false, columnDefinition="INT  default '1'")
+  @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isAccountExpired = true;
 
   @ManyToMany(fetch = FetchType.EAGER)
   Set<Role> roles;
-
 
   public Set<Role> getRoles() {
     return roles;

@@ -15,23 +15,22 @@ public class ProductEntity {
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
-  Integer id;
+  private Integer id;
 
   @Size(min = 1, max = 200)
-  String name;
+  private String name;
 
   @Size(min = 1, max = 5000)
-  String description;
+  private String description;
 
-  @NotNull Double price;
+  @NotNull private Double price;
 
   @Size(min = 1, max = 2000)
-  String imageSrc;
-
+  private String imageSrc;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-  @Column(columnDefinition="INT  default '0'", nullable = false)
-  Integer numberOfPurchases = 0;
+  @Column(columnDefinition = "INT  default '0'", nullable = false)
+  private Integer numberOfPurchases = 0;
 
   @ManyToMany(
       fetch = FetchType.LAZY,

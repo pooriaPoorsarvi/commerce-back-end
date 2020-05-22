@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProductRepository
+interface ProductRepository
     extends JpaRepository<ProductEntity, Integer>,
         PagingAndSortingRepository<ProductEntity, Integer> {
   @Override

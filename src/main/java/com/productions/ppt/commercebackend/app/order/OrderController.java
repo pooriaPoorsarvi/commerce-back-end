@@ -1,9 +1,8 @@
 package com.productions.ppt.commercebackend.app.order;
 
 import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
-import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseRepository;
-import com.productions.ppt.commercebackend.app.user.UserEntity;
-import com.productions.ppt.commercebackend.app.user.UserRepository;
+import com.productions.ppt.commercebackend.app.user.models.UserEntity;
+import com.productions.ppt.commercebackend.app.user.services.UserService;
 import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +14,14 @@ import java.net.URI;
 import java.util.*;
 
 @RestController
-public class OrderController {
+class OrderController {
 
   OrderRepository orderRepository;
-  ProductPurchaseRepository productPurchaseRepository;
-  UserRepository userRepository;
+  UserService userService;
 
-  public OrderController(
-      OrderRepository orderRepository,
-      ProductPurchaseRepository productPurchaseRepository,
-      UserRepository userRepository) {
+  public OrderController(OrderRepository orderRepository, UserService userService) {
     this.orderRepository = orderRepository;
-    this.productPurchaseRepository = productPurchaseRepository;
-    this.userRepository = userRepository;
+    this.userService = userService;
   }
 
   //    TODO : Implement 404 for all of the functions
@@ -57,22 +51,22 @@ public class OrderController {
 
     // TODO In the future you have to get the ID using jwt
     UserEntity userEntity =
-        userRepository
+        userService
             .findById(1)
             .<EntityNotFoundInDBException>orElseThrow(
                 () -> {
                   throw new EntityNotFoundInDBException("User not found");
                 });
-    orderEntity.finalised = 0;
+    orderEntity.setFinalised(0);
     orderEntity.setOwner(userEntity);
     orderEntity.setPurchaseDate(new Date());
     orderRepository.save(orderEntity);
     userEntity.getOrderEntityList().add(orderEntity);
-    userRepository.save(userEntity);
+    userService.save(userEntity);
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
             .path("/{ID}")
-            .buildAndExpand(orderEntity.id)
+            .buildAndExpand(orderEntity.getId())
             .toUri();
     return ResponseEntity.created(location).build();
   }

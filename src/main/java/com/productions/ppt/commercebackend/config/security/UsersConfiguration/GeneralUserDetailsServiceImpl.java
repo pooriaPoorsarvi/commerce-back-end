@@ -1,23 +1,23 @@
-package com.productions.ppt.commercebackend.app.user;
+package com.productions.ppt.commercebackend.config.security.UsersConfiguration;
 
+import com.productions.ppt.commercebackend.app.user.services.UserService;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
-public class GeneralUserDetailsService implements UserDetailsService {
+@Component
+class GeneralUserDetailsServiceImpl implements GeneralUserDetailsService {
 
-  UserRepository userRepository;
+  UserService userService;
 
-  public GeneralUserDetailsService(UserRepository userRepository) {
-    this.userRepository = userRepository;
+  public GeneralUserDetailsServiceImpl(UserService userService) {
+    this.userService = userService;
   }
 
   @Override
   public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
     GeneralUserDetails res =  new GeneralUserDetails(
-        userRepository
+        userService
             .findByEmail(s)
             .<UsernameNotFoundException>orElseThrow(
                 () -> {

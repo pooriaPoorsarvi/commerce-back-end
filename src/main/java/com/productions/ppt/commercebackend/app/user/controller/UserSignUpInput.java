@@ -1,8 +1,8 @@
-package com.productions.ppt.commercebackend.app.user;
+package com.productions.ppt.commercebackend.app.user.controller;
 
 import javax.validation.constraints.NotNull;
 
-public class UserSignUpInput {
+class UserSignUpInput {
     @NotNull
     String email;
     @NotNull
