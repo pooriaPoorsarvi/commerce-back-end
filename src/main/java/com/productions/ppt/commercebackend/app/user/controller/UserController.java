@@ -69,8 +69,9 @@ class UserController {
     role.setRole("ROLE_USER");
     userEntity.getRoles().add(role);
     userService.save(userEntity);
-    return ResponseEntity.ok(
-        jwtUtil.generateToken(generalUserDetailsService.loadUserByUsername(userEntity.getEmail())));
+    String jwt = jwtUtil.generateToken(
+            generalUserDetailsService.loadUserByUsername(userEntity.getEmail()));
+    return ResponseEntity.ok(new SingUpResult(jwt, userEntity.getEmail()));
   }
 
   @PostMapping("/users/{ID}/shopping-cart-products")
