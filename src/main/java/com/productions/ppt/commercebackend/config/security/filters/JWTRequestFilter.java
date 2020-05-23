@@ -1,4 +1,4 @@
-package com.productions.ppt.commercebackend.config.filters;
+package com.productions.ppt.commercebackend.config.security.filters;
 
 import com.productions.ppt.commercebackend.config.security.UsersConfiguration.GeneralUserDetailsService;
 import com.productions.ppt.commercebackend.shared.utils.JWTUtil;

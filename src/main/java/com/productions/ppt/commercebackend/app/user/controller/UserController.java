@@ -41,6 +41,7 @@ class UserController {
             });
   }
 
+  @CrossOrigin()
   @PostMapping("users")
   ResponseEntity<?> addUser(@Valid @RequestBody UserSignUpInput userSignUpInput) {
     UserEntity userEntity = new UserEntity();

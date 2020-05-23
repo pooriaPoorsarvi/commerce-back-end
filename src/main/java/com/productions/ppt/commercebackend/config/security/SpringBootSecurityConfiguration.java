@@ -1,7 +1,7 @@
 package com.productions.ppt.commercebackend.config.security;
 
 import com.productions.ppt.commercebackend.config.security.UsersConfiguration.GeneralUserDetailsService;
-import com.productions.ppt.commercebackend.config.filters.JWTRequestFilter;
+import com.productions.ppt.commercebackend.config.security.filters.JWTRequestFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -32,8 +32,6 @@ public class SpringBootSecurityConfiguration extends WebSecurityConfigurerAdapte
 //    TODO in the future only allow unauthorized people to log back in
     http.csrf()
         .disable()
-        .cors()
-        .and()
         .authorizeRequests()
         .antMatchers("/users")
         .permitAll()
