@@ -43,7 +43,7 @@ class AuthenticateController {
     }
     AuthenticateOutput authenticateOutput =
         new AuthenticateOutput(
-            jwtUtil.generateToken(generalUserDetailsService.loadUserByUsername("p@gm.c")));
+            jwtUtil.generateToken(generalUserDetailsService.loadUserByUsername(authenticateInput.email)));
     return ResponseEntity.ok(authenticateOutput);
   }
 }
