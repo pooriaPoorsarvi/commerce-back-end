@@ -87,10 +87,12 @@ class UserController {
 
   @PostMapping("/users/shopping-cart-products")
   ResponseEntity<Object> addProductToShoppingCart(
-      @PathVariable Integer ID, @Valid @RequestBody Integer[] productEntitiesIds) {
+      @Valid @RequestBody Integer[] productEntitiesIds) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     UserEntity userEntity =
         userService
-            .findById(ID)
+            .findByEmail(userDetails.getUsername())
             .<EntityNotFoundInDBException>orElseThrow(
                 () -> {
                   throw new EntityNotFoundInDBException("user not found.");
@@ -113,10 +115,12 @@ class UserController {
     return ResponseEntity.created(location).build();
   }
 
-  @GetMapping("/users/{ID}/shopping-cart-products")
-  Set<ProductEntity> getShoppingCart(@PathVariable Integer ID) {
+  @GetMapping("/users/shopping-cart-products")
+  Set<ProductEntity> getShoppingCart() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     return userService
-        .findById(ID)
+        .findByEmail(userDetails.getUsername())
         .map(UserEntity::getActiveShoppingCart)
         .<EntityNotFoundInDBException>orElseThrow(
             () -> {
