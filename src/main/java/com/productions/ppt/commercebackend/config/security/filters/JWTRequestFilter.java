@@ -48,7 +48,6 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     String jwt = null;
 
     if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-      System.out.println("JWT : " + authorizationHeader.substring(7));
       jwt = authorizationHeader.substring(7);
       username = jwtUtil.extractUsername(jwt);
     }
@@ -86,14 +85,37 @@ public class JWTRequestFilter extends OncePerRequestFilter {
         | UsernameNotFoundException e) {
       //        TODO make this into a class in the future, and make the error an actual error
       httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-      Map<String, String> res = new HashMap<>();
-      res.put("\"error\"", "\"Bad JWT\"");
-      res.put("\"message\"", "\"Bad JWT was received.\"");
-      res.put("\"path\"", "\""+httpServletRequest.getServletPath()+"\"");
-      res.put("\"status\"", "401");
+      StringBuilder stringBuilder = new StringBuilder();
+
+      stringBuilder.append("{");
+
+      stringBuilder.append("\"error\"");
+      stringBuilder.append(":");
+      stringBuilder.append("\"Bad JWT\"");
+
+      stringBuilder.append(",");
+
+      stringBuilder.append("\"message\"");
+      stringBuilder.append(":");
+      stringBuilder.append("\"Bad JWT was received.\"");
+
+      stringBuilder.append(",");
+
+      stringBuilder.append("\"path\"");
+      stringBuilder.append(":");
+      stringBuilder.append("\"" + httpServletRequest.getServletPath() + "\"");
+
+      stringBuilder.append(",");
+
+      stringBuilder.append("\"status\"");
+      stringBuilder.append(":");
+      stringBuilder.append("401");
+
+      stringBuilder.append("}");
+
       httpServletResponse.setStatus(401);
       httpServletResponse.setHeader("Content-Type", "application/json");
-      httpServletResponse.getWriter().write(res.toString());
+      httpServletResponse.getWriter().write(stringBuilder.toString());
     }
   }
 }

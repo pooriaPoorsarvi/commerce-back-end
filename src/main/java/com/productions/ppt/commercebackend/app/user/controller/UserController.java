@@ -50,6 +50,7 @@ class UserController {
   //      and the other doesn't. Hence the instanceof. Check if you can remove this. This also holds
   //      true for the
   //      Put option
+  @CrossOrigin()
   @GetMapping("/users")
   UserEntity getUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -89,6 +90,7 @@ class UserController {
   }
 
   //  TODO make tests for this function
+  @CrossOrigin()
   @PutMapping("/users")
   UserEntity updateUser(@Valid @RequestBody UpdateUserEntity newUserEntity) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -110,10 +112,10 @@ class UserController {
       userEntity.setPassword(passwordEncoder.encode(newUserEntity.getOldPassword()));
     }
 
-    if (userEntity.getEmail() != null) {
-      if (!newUserEntity.getEmail().equals(userEntity.getEmail())
-          && userService.findByEmail(newUserEntity.getEmail()).isPresent()) {
-        throw new BusinessErrorException("A user name with this user name already exists");
+    if (newUserEntity.getEmail() != null) {
+      if (userService.findByEmail(newUserEntity.getEmail()).isPresent()) {
+        if (!(userEntity.getEmail()!= null && newUserEntity.getEmail().equals(userEntity.getEmail())))
+          throw new BusinessErrorException("A user name with this user name already exists");
       }
       userEntity.setEmail(newUserEntity.getEmail());
     }
