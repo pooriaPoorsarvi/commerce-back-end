@@ -1,6 +1,7 @@
 package com.productions.ppt.commercebackend.app.user.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.productions.ppt.commercebackend.app.order.OrderEntity;
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 
@@ -11,6 +12,8 @@ import java.util.Set;
 
 @Entity
 public class UserEntity {
+
+//  TODO add end points for different things to be updated or updated together
 
   //  TODO : add user password field and jwt
   @JsonIgnore
@@ -24,11 +27,15 @@ public class UserEntity {
   @Size(min = 1, max = 500)
   private String lastName;
 
+  @Size(min = 1, max = 500)
+  private String address;
+
   @Email
   @Size(min = 5, max = 500)
   @Column(unique = true)
   private String email;
 
+  @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   @Size(min = 5, max = 500)
   private String password;
 
@@ -40,15 +47,19 @@ public class UserEntity {
   @ManyToMany(fetch = FetchType.LAZY)
   private Set<ProductEntity> activeShoppingCart;
 
+  @JsonIgnore
   @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isEnabled = true;
 
+  @JsonIgnore
   @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isCredentialsNonExpired = true;
 
+  @JsonIgnore
   @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isAccountNonLocked = true;
 
+  @JsonIgnore
   @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isAccountExpired = true;
 
@@ -71,6 +82,7 @@ public class UserEntity {
     this.password = password;
   }
 
+  @JsonIgnore
   public boolean isEnabled() {
     return isEnabled;
   }
@@ -79,6 +91,7 @@ public class UserEntity {
     isEnabled = enabled;
   }
 
+  @JsonIgnore
   public boolean isCredentialsNonExpired() {
     return isCredentialsNonExpired;
   }
@@ -87,6 +100,7 @@ public class UserEntity {
     isCredentialsNonExpired = credentialsNonExpired;
   }
 
+  @JsonIgnore
   public boolean isAccountNonLocked() {
     return isAccountNonLocked;
   }
@@ -95,6 +109,7 @@ public class UserEntity {
     isAccountNonLocked = accountNonLocked;
   }
 
+  @JsonIgnore
   public boolean isAccountExpired() {
     return isAccountExpired;
   }
@@ -141,6 +156,14 @@ public class UserEntity {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  public String getAddress() {
+    return address;
+  }
+
+  public void setAddress(String address) {
+    this.address = address;
   }
 
   public Set<OrderEntity> getOrderEntityList() {

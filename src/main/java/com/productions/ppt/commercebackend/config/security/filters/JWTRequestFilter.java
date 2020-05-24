@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -19,6 +20,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
@@ -78,10 +82,18 @@ public class JWTRequestFilter extends OncePerRequestFilter {
     } catch (ExpiredJwtException
         | UnsupportedJwtException
         | MalformedJwtException
-        | SignatureException e) {
-      //        TODO make this into a class in the future
+        | SignatureException
+        | UsernameNotFoundException e) {
+      //        TODO make this into a class in the future, and make the error an actual error
       httpServletResponse.setStatus(HttpStatus.BAD_REQUEST.value());
-      httpServletResponse.getWriter().write("Bad JWT was received.");
+      Map<String, String> res = new HashMap<>();
+      res.put("\"error\"", "\"Bad JWT\"");
+      res.put("\"message\"", "\"Bad JWT was received.\"");
+      res.put("\"path\"", "\""+httpServletRequest.getServletPath()+"\"");
+      res.put("\"status\"", "401");
+      httpServletResponse.setStatus(401);
+      httpServletResponse.setHeader("Content-Type", "application/json");
+      httpServletResponse.getWriter().write(res.toString());
     }
   }
 }

@@ -6,10 +6,14 @@ import com.productions.ppt.commercebackend.app.user.models.Role;
 import com.productions.ppt.commercebackend.app.user.services.UserService;
 import com.productions.ppt.commercebackend.app.user.models.UserEntity;
 import com.productions.ppt.commercebackend.config.security.UsersConfiguration.GeneralUserDetailsService;
+import com.productions.ppt.commercebackend.exceptions.AuthenticationError;
 import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import com.productions.ppt.commercebackend.shared.utils.JWTUtil;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -41,10 +45,17 @@ class UserController {
     this.generalUserDetailsService = generalUserDetailsService;
   }
 
-  @GetMapping("users/{ID}")
-  UserEntity getUser(@PathVariable Integer ID) {
+//  TODO right now users is at conflict with users post "security wise" because one need authentication
+//    and the other doesn't. Hence the instanceof. Check if you can remove this.
+  @GetMapping("users")
+  UserEntity getUser() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (!(authentication.getPrincipal() instanceof UserDetails)){
+      throw new AuthenticationError("User not authenticated.");
+    }
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     return this.userService
-        .findById(ID)
+        .findByEmail(userDetails.getUsername())
         .<EntityNotFoundInDBException>orElseThrow(
             () -> {
               throw new EntityNotFoundInDBException("User not found.");
@@ -74,7 +85,7 @@ class UserController {
     return ResponseEntity.ok(new SingUpResult(jwt, userEntity.getEmail()));
   }
 
-  @PostMapping("/users/{ID}/shopping-cart-products")
+  @PostMapping("/users/shopping-cart-products")
   ResponseEntity<Object> addProductToShoppingCart(
       @PathVariable Integer ID, @Valid @RequestBody Integer[] productEntitiesIds) {
     UserEntity userEntity =
