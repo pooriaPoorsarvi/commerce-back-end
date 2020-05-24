@@ -18,9 +18,11 @@ class UserServiceImpl implements UserService  {
         return this.userRepository.findById(ID);
     }
 
+    //   TODO add flush to all other repositories
     @Override
     public void save(UserEntity userEntity) {
         userRepository.save(userEntity);
+        userRepository.flush();
     }
 
     @Override

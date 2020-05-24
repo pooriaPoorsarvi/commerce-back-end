@@ -45,12 +45,15 @@ class UserController {
     this.generalUserDetailsService = generalUserDetailsService;
   }
 
-//  TODO right now users is at conflict with users post "security wise" because one need authentication
-//    and the other doesn't. Hence the instanceof. Check if you can remove this.
-  @GetMapping("users")
+  //  TODO right now users is at conflict with users post "security wise" because one need
+  //      authentication
+  //      and the other doesn't. Hence the instanceof. Check if you can remove this. This also holds
+  //      true for the
+  //      Put option
+  @GetMapping("/users")
   UserEntity getUser() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if (!(authentication.getPrincipal() instanceof UserDetails)){
+    if (!(authentication.getPrincipal() instanceof UserDetails)) {
       throw new AuthenticationError("User not authenticated.");
     }
     UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -63,7 +66,7 @@ class UserController {
   }
 
   @CrossOrigin()
-  @PostMapping("users")
+  @PostMapping("/users")
   ResponseEntity<?> addUser(@Valid @RequestBody UserSignUpInput userSignUpInput) {
     UserEntity userEntity = new UserEntity();
     if (userService.findByEmail(userSignUpInput.email).isPresent()) {
@@ -80,9 +83,48 @@ class UserController {
     role.setRole("ROLE_USER");
     userEntity.getRoles().add(role);
     userService.save(userEntity);
-    String jwt = jwtUtil.generateToken(
-            generalUserDetailsService.loadUserByUsername(userEntity.getEmail()));
+    String jwt =
+        jwtUtil.generateToken(generalUserDetailsService.loadUserByUsername(userEntity.getEmail()));
     return ResponseEntity.ok(new SingUpResult(jwt, userEntity.getEmail()));
+  }
+
+  //  TODO make tests for this function
+  @PutMapping("/users")
+  UserEntity updateUser(@Valid @RequestBody UpdateUserEntity newUserEntity) {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (!(authentication.getPrincipal() instanceof UserDetails)) {
+      throw new AuthenticationError("User not authenticated.");
+    }
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    UserEntity userEntity =
+        userService
+            .findByEmail(userDetails.getUsername())
+            .<AuthenticationError>orElseThrow(
+                () -> {
+                  throw new AuthenticationError("Your account has been deleted.");
+                });
+    if (!passwordEncoder.matches(newUserEntity.getOldPassword(), userEntity.getPassword())) {
+      throw new AuthenticationError("Wrong password entered");
+    }
+    if (newUserEntity.getPassword() != null && newUserEntity.getPassword().length() > 0) {
+      userEntity.setPassword(passwordEncoder.encode(newUserEntity.getOldPassword()));
+    }
+
+    if (userEntity.getEmail() != null) {
+      if (!newUserEntity.getEmail().equals(userEntity.getEmail())
+          && userService.findByEmail(newUserEntity.getEmail()).isPresent()) {
+        throw new BusinessErrorException("A user name with this user name already exists");
+      }
+      userEntity.setEmail(newUserEntity.getEmail());
+    }
+
+    if (newUserEntity.getAddress() != null) userEntity.setAddress(newUserEntity.getAddress());
+    if (newUserEntity.getFirstName() != null) userEntity.setFirstName(newUserEntity.getFirstName());
+    if (newUserEntity.getLastName() != null) userEntity.setLastName(newUserEntity.getLastName());
+
+    userService.save(userEntity);
+
+    return userEntity;
   }
 
   @PostMapping("/users/shopping-cart-products")

@@ -63,8 +63,9 @@ public class UserEntity {
   @Column(nullable = false, columnDefinition = "INT  default '1'")
   private boolean isAccountExpired = true;
 
+  @JsonIgnore
   @ManyToMany(fetch = FetchType.EAGER)
-  Set<Role> roles;
+  private Set<Role> roles;
 
   public Set<Role> getRoles() {
     return roles;
