@@ -66,6 +66,7 @@ class UserController {
             });
   }
 
+//  TODO you showed sql back to the user, check what the hell happened there also check why address and email are the same
   @CrossOrigin()
   @PostMapping("/users")
   ResponseEntity<?> addUser(@Valid @RequestBody UserSignUpInput userSignUpInput) {

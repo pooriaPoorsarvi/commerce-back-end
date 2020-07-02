@@ -1,0 +1,39 @@
+language: java
+java:
+  - "1.8.0"
+sudo: true
+
+branches:
+  only:
+    - master
+
+before_install:
+  - chmod +x mvnw
+
+# We do not set the active profile here, we set them in the IDE and the Env of AWS
+install:
+  - mvn clean  package
+  - mkdir bundle
+  - touch ./bundle/Procfile
+  #  The following line is just the argument that we want to set in the procfile using the secure variable, but when we saved it we should save it inside ""
+  - echo $JAVA_ARGS > ./bundle/Procfile
+  - mv ./target/portfolio-back-end-0.0.1-SNAPSHOT.jar ./bundle/application.jar
+  - zip -r ./bundle.zip ./bundle/Procfile ./bundle/application.jar
+
+cache:
+  yarn: true
+
+
+#script:
+
+deploy:
+  provider: elasticbeanstalk
+  access_key_id: $ACCESS_KEY_ID_AWS
+  secret_access_key: $SECRET_ACCESS_KEY_AWS
+  region: "us-east-2"
+  app: "commerce-back-end-travis"
+  env : "CommerceBackEndTravis-env"
+  bucket_name: "elasticbeanstalk-us-east-2-618374832570"
+  zip_file: "./bundle.zip"
+  #  The clean up is skipped so that the jar file would not be removed
+  skip_cleanup: true

@@ -5,6 +5,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
 
@@ -21,4 +22,14 @@ interface ProductRepository
   @Override
   Page<ProductEntity> findAll(Pageable pageable);
 
+  //  TODO make this lists into pages
+
+  List<ProductEntity> findByNameIgnoreCaseContaining(String name);
+
+  List<ProductEntity> findByDescriptionIgnoreCaseContaining(String name);
+
+  @Query(
+      value =
+          "select distinct p from ProductEntity as p where p.description like %:searchExpression% or p.name like %:searchExpression% ")
+  List<ProductEntity> findBySearch(String searchExpression);
 }

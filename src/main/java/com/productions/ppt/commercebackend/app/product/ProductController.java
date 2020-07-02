@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Stream;
@@ -67,4 +69,11 @@ class ProductController {
         .findAll(PageRequest.of(0, 3, Sort.by("numberOfPurchases").descending()))
         .get();
   }
+
+  @CrossOrigin()
+  @PostMapping("/products/search")
+  List<ProductEntity> search(@RequestBody @Valid @NotNull String searchExpression){
+    return productRepository.findBySearch(searchExpression);
+  }
+
 }
