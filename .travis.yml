@@ -17,7 +17,7 @@ install:
   - touch ./bundle/Procfile
   #  The following line is just the argument that we want to set in the procfile using the secure variable, but when we saved it we should save it inside ""
   - echo $JAVA_ARGS > ./bundle/Procfile
-  - mv ./target/portfolio-back-end-0.0.1-SNAPSHOT.jar ./bundle/application.jar
+  - mv ./target/commerce-back-end-0.0.1-SNAPSHOT.jar ./bundle/application.jar
   - zip -r ./bundle.zip ./bundle/Procfile ./bundle/application.jar
 
 cache:
