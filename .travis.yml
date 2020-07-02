@@ -13,7 +13,6 @@ before_install:
 # We do not set the active profile here, we set them in the IDE and the Env of AWS
 install:
   - mvn clean  package
-  - mkdir bundle
   - touch ./Procfile
   #  The following line is just the argument that we want to set in the procfile using the secure variable, but when we saved it we should save it inside ""
   - echo $JAVA_ARGS > ./Procfile
