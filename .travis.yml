@@ -14,11 +14,11 @@ before_install:
 install:
   - mvn clean  package
   - mkdir bundle
-  - touch ./bundle/Procfile
+  - touch ./Procfile
   #  The following line is just the argument that we want to set in the procfile using the secure variable, but when we saved it we should save it inside ""
-  - echo $JAVA_ARGS > ./bundle/Procfile
-  - mv ./target/commerce-back-end-0.0.1-SNAPSHOT.jar ./bundle/application.jar
-  - zip -r ./bundle.zip ./bundle/Procfile ./bundle/application.jar
+  - echo $JAVA_ARGS > ./Procfile
+  - mv ./target/commerce-back-end-0.0.1-SNAPSHOT.jar ./application.jar
+  - zip -r ./bundle.zip ./Procfile ./application.jar
 
 cache:
   yarn: true
