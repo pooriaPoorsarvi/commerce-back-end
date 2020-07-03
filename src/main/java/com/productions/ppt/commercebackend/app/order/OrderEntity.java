@@ -2,7 +2,7 @@ package com.productions.ppt.commercebackend.app.order;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
+import com.productions.ppt.commercebackend.app.order.purchase.ProductPurchaseEntity;
 import com.productions.ppt.commercebackend.app.user.models.UserEntity;
 
 import javax.persistence.*;

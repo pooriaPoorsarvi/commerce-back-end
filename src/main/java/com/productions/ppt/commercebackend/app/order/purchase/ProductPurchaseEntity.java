@@ -1,4 +1,4 @@
-package com.productions.ppt.commercebackend.app.product.purchase;
+package com.productions.ppt.commercebackend.app.order.purchase;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,4 +1,4 @@
-package com.productions.ppt.commercebackend.app.product.purchase;
+package com.productions.ppt.commercebackend.app.order.purchase;
 
 import com.productions.ppt.commercebackend.app.order.OrderEntity;
 import com.productions.ppt.commercebackend.app.order.OrderService;
@@ -30,44 +30,7 @@ class ProductPurchaseController {
     this.orderService = orderService;
   }
 
-  @ApiOperation("Please make sure that the number that you are trying to add is positive.")
-  @PostMapping("/product-purchase/{productId}/{orderId}/{number}")
-  ResponseEntity<Object> createProductPurchase(
-      @PathVariable Integer number,
-      @PathVariable Integer productId,
-      @PathVariable Integer orderId) {
-    if (number <= 0) {
-//      TODO  make sure that this number is less than the available products, and first reduce that
-      throw new BusinessErrorException(
-          "The number of products that are being bought was not positive.");
-    }
-    ProductEntity productEntity =
-        productService
-            .findById(productId)
-            .<EntityNotFoundInDBException>orElseThrow(
-                () -> {
-                  throw new EntityNotFoundInDBException("Product not found.");
-                });
-    OrderEntity orderEntity =
-        orderService
-            .findById(orderId)
-            .<EntityNotFoundInDBException>orElseThrow(
-                () -> {
-                  throw new EntityNotFoundInDBException("Order not found.");
-                });
-    ProductPurchaseEntity productPurchaseEntity = new ProductPurchaseEntity();
-    productPurchaseEntity.setCount(number);
-    productPurchaseEntity.setOrderEntity(orderEntity);
-    productPurchaseEntity.setProductEntity(productEntity);
-    productPurchaseRepository.save(productPurchaseEntity);
-    orderService.save(orderEntity);
-    URI location =
-        ServletUriComponentsBuilder.fromUriString("/product-purchase")
-            .path("/{ID}")
-            .buildAndExpand(productPurchaseEntity.getId())
-            .toUri();
-    return ResponseEntity.created(location).build();
-  }
+
 
   @GetMapping("/product-purchase/{ID}")
   ProductPurchaseEntity getProductPurchase(@PathVariable Integer ID) {

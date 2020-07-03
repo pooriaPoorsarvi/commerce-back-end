@@ -1,6 +1,5 @@
-package com.productions.ppt.commercebackend.app.product.purchase;
+package com.productions.ppt.commercebackend.app.order.purchase;
 
-import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

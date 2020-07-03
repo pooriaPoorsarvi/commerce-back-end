@@ -29,10 +29,12 @@ public class SpringBootSecurityConfiguration extends WebSecurityConfigurerAdapte
   //  TODO delete unnecessary crossOrigin annotations
   @Override
   protected void configure(HttpSecurity http) throws Exception {
-//    TODO in the future only allow unauthorized people to log back in
+    //    TODO in the future only allow unauthorized people to log back in
     http.csrf()
         .disable()
         .authorizeRequests()
+        .antMatchers("/order**")
+        .authenticated()
         .antMatchers("/users")
         .permitAll()
         .antMatchers("/users/**")

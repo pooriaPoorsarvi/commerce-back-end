@@ -1,4 +1,4 @@
-package com.productions.ppt.commercebackend.app.product.purchase;
+package com.productions.ppt.commercebackend.app.order.purchase;
 
 import org.springframework.stereotype.Component;
 
@@ -21,5 +21,10 @@ class ProductPurchaseServiceImpl implements ProductPurchaseService{
     @Override
     public void deleteById(Integer Id) {
         productPurchaseRepository.deleteById(Id);
+    }
+
+    @Override
+    public void save(ProductPurchaseEntity productPurchaseEntity){
+        this.productPurchaseRepository.save(productPurchaseEntity);
     }
 }

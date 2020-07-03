@@ -12,7 +12,9 @@ import java.util.Set;
 @Entity
 public class ProductEntity {
 
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//  TODO decouple all the dto and models
+//  TODO check what happens if you let user writes the id's, right now this is being used in the creation of orders
+//    since we actually check the id there
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Id
   private Integer id;

@@ -1,11 +1,17 @@
 package com.productions.ppt.commercebackend.app.order;
 
-import com.productions.ppt.commercebackend.app.product.purchase.ProductPurchaseEntity;
+import com.productions.ppt.commercebackend.app.order.purchase.ProductPurchaseEntity;
+import com.productions.ppt.commercebackend.app.order.purchase.ProductPurchaseService;
+import com.productions.ppt.commercebackend.app.product.ProductEntity;
+import com.productions.ppt.commercebackend.app.product.ProductService;
 import com.productions.ppt.commercebackend.app.user.models.UserEntity;
 import com.productions.ppt.commercebackend.app.user.services.UserService;
 import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -18,10 +24,18 @@ class OrderController {
 
   OrderRepository orderRepository;
   UserService userService;
+  ProductPurchaseService productPurchaseService;
+  ProductService productService;
 
-  public OrderController(OrderRepository orderRepository, UserService userService) {
+  public OrderController(
+      OrderRepository orderRepository,
+      UserService userService,
+      ProductPurchaseService productPurchaseService,
+      ProductService productService) {
     this.orderRepository = orderRepository;
     this.userService = userService;
+    this.productPurchaseService = productPurchaseService;
+    this.productService = productService;
   }
 
   //    TODO : Implement 404 for all of the functions
@@ -47,12 +61,50 @@ class OrderController {
   }
 
   @PostMapping("/orders")
-  ResponseEntity<Object> createOrder(@Valid @RequestBody OrderEntity orderEntity) {
+  ResponseEntity<?> createNewOrder(@RequestBody @Valid List<OrderProductsInput> orderProductsInputs) {
+    OrderEntity orderEntity = createOrder(new OrderEntity());
+    // TODO  do all the checks here that the order is valid
+    for (OrderProductsInput orderProductsInput : orderProductsInputs) {
+
+      System.out.println(productService);
+      System.out.println(orderProductsInput);
+      System.out.println(orderProductsInput.getProduct());
+      System.out.println(orderProductsInput.getProduct().getId());
+      ProductEntity productEntity =
+          productService
+              .findById(orderProductsInput.getProduct().getId())
+              .<BusinessErrorException>orElseThrow(
+                  () -> {
+                    throw new BusinessErrorException("Product not found for adding to the order");
+                  });
+      ProductPurchaseEntity productPurchaseEntity = new ProductPurchaseEntity();
+      productPurchaseEntity.setProductEntity(productEntity);
+      productPurchaseEntity.setCount(orderProductsInput.getNumberOfProduct());
+      productPurchaseEntity.setOrderEntity(orderEntity);
+      productPurchaseEntity.setIndividualPriceAtPurchase(productEntity.getPrice());
+      //      TODO check whether or not you can use the finalised variable later
+      productPurchaseEntity.setFinalised(1);
+      productPurchaseService.save(productPurchaseEntity);
+      orderEntity.getProductsPurchasedEntityList().add(productPurchaseEntity);
+      orderRepository.save(orderEntity);
+      orderRepository.flush();
+    }
+    URI location =
+            ServletUriComponentsBuilder.fromCurrentRequest()
+                    .path("/{ID}")
+                    .buildAndExpand(orderEntity.getId())
+                    .toUri();
+    return ResponseEntity.created(location).build();
+  }
+
+  OrderEntity createOrder(@Valid @RequestBody OrderEntity orderEntity) {
 
     // TODO In the future you have to get the ID using jwt
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
     UserEntity userEntity =
         userService
-            .findById(1)
+            .findByEmail(userDetails.getUsername())
             .<EntityNotFoundInDBException>orElseThrow(
                 () -> {
                   throw new EntityNotFoundInDBException("User not found");
@@ -60,15 +112,12 @@ class OrderController {
     orderEntity.setFinalised(0);
     orderEntity.setOwner(userEntity);
     orderEntity.setPurchaseDate(new Date());
+    orderEntity.setProductsPurchasedEntityList(new HashSet<>());
+    orderEntity.setAmountPayed(0.);
     orderRepository.save(orderEntity);
     userEntity.getOrderEntityList().add(orderEntity);
     userService.save(userEntity);
-    URI location =
-        ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/{ID}")
-            .buildAndExpand(orderEntity.getId())
-            .toUri();
-    return ResponseEntity.created(location).build();
+    return orderEntity;
   }
 
   @PostMapping("/orders/{ID}/finalize")
