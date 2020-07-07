@@ -9,12 +9,13 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 public class OrderEntity {
 
-    @JsonIgnore
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Integer id;
@@ -42,6 +43,10 @@ public class OrderEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private UserEntity owner;
+
+    @Column(nullable = false, columnDefinition = "INT default '0'")
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Integer numberOfProductPurchase = 0;
 
 
     public Integer getFinalised() {
@@ -93,8 +98,14 @@ public class OrderEntity {
     }
 
 
-    public Set<ProductPurchaseEntity> getProductsPurchasedEntityList() {
-        return productsPurchasedEntityList;
+    Set<ProductPurchaseEntity> getProductsPurchasedEntityListCopy(){
+        return new HashSet<>(productsPurchasedEntityList);
+    }
+    public void addProductPurchaseEntity(ProductPurchaseEntity p){
+        this.productsPurchasedEntityList.add(p);
+        this.numberOfProductPurchase = this.productsPurchasedEntityList.size();
+//        TODO check if this value is updated at all places
+        this.amountPayed += p.getCount() * p.getIndividualPriceAtPurchase();
     }
 
     public void setProductsPurchasedEntityList(Set<ProductPurchaseEntity> productEntityList) {

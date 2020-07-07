@@ -39,6 +39,8 @@ class OrderController {
   }
 
   //    TODO : Implement 404 for all of the functions
+//  TODO make the gets work with the user ids
+  @CrossOrigin()
   @GetMapping("/orders/{ID}")
   OrderEntity getOrder(@PathVariable Integer ID) {
     return orderRepository
@@ -49,19 +51,43 @@ class OrderController {
             });
   }
 
+  @CrossOrigin()
   @GetMapping("/orders/{ID}/purchased-products")
   Set<ProductPurchaseEntity> getOrderPurchasedProducts(@PathVariable Integer ID) {
     return orderRepository
         .findById(ID)
-        .map(OrderEntity::getProductsPurchasedEntityList)
+        .map(OrderEntity::getProductsPurchasedEntityListCopy)
         .<EntityNotFoundInDBException>orElseThrow(
             () -> {
               throw new EntityNotFoundInDBException("Order not found.");
             });
   }
 
+
+  @CrossOrigin()
+  @GetMapping("/orders")
+  List<OrderEntity> getAllOrders(){
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    UserEntity userEntity =
+            userService
+                    .findByEmail(userDetails.getUsername())
+                    .<EntityNotFoundInDBException>orElseThrow(
+                            () -> {
+                              throw new EntityNotFoundInDBException("User not found");
+                            });
+    return orderRepository.findByEmail(userEntity.getEmail());
+  }
+  @CrossOrigin()
   @PostMapping("/orders")
   ResponseEntity<?> createNewOrder(@RequestBody @Valid List<OrderProductsInput> orderProductsInputs) {
+    int totalSum = 0;
+    for (OrderProductsInput in: orderProductsInputs) {
+        totalSum += in.numberOfProduct;
+    }
+    if (orderProductsInputs.size() == 0 || totalSum == 0){
+      throw new BusinessErrorException("The number of orders are not sufficient for ordering");
+    }
     OrderEntity orderEntity = createOrder(new OrderEntity());
     // TODO  do all the checks here that the order is valid
     for (OrderProductsInput orderProductsInput : orderProductsInputs) {
@@ -85,7 +111,7 @@ class OrderController {
       //      TODO check whether or not you can use the finalised variable later
       productPurchaseEntity.setFinalised(1);
       productPurchaseService.save(productPurchaseEntity);
-      orderEntity.getProductsPurchasedEntityList().add(productPurchaseEntity);
+      orderEntity.addProductPurchaseEntity(productPurchaseEntity);
       orderRepository.save(orderEntity);
       orderRepository.flush();
     }

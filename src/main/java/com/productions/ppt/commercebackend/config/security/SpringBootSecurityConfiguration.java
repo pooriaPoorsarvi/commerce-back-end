@@ -3,6 +3,7 @@ package com.productions.ppt.commercebackend.config.security;
 import com.productions.ppt.commercebackend.config.security.UsersConfiguration.GeneralUserDetailsService;
 import com.productions.ppt.commercebackend.config.security.filters.JWTRequestFilter;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -30,9 +31,12 @@ public class SpringBootSecurityConfiguration extends WebSecurityConfigurerAdapte
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     //    TODO in the future only allow unauthorized people to log back in
+    //    TODO check if allowing all options is ok
     http.csrf()
         .disable()
         .authorizeRequests()
+        .antMatchers(HttpMethod.OPTIONS, "/**")
+        .permitAll()
         .antMatchers("/order**")
         .authenticated()
         .antMatchers("/users")
