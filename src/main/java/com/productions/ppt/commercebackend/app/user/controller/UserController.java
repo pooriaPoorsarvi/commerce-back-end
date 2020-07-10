@@ -2,6 +2,7 @@ package com.productions.ppt.commercebackend.app.user.controller;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.ProductService;
+import com.productions.ppt.commercebackend.app.user.configuration.AdminConfiguration;
 import com.productions.ppt.commercebackend.app.user.models.Role;
 import com.productions.ppt.commercebackend.app.user.services.UserService;
 import com.productions.ppt.commercebackend.app.user.models.UserEntity;
@@ -10,6 +11,8 @@ import com.productions.ppt.commercebackend.exceptions.AuthenticationError;
 import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import com.productions.ppt.commercebackend.shared.utils.JWTUtil;
+import org.apache.tomcat.jni.Error;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,18 +34,67 @@ class UserController {
   PasswordEncoder passwordEncoder;
   JWTUtil jwtUtil;
   GeneralUserDetailsService generalUserDetailsService;
+  AdminConfiguration adminConfiguration;
 
   public UserController(
       UserService userService,
       ProductService productService,
       PasswordEncoder passwordEncoder,
       JWTUtil jwtUtil,
-      GeneralUserDetailsService generalUserDetailsService) {
+      GeneralUserDetailsService generalUserDetailsService,
+      AdminConfiguration adminConfiguration) {
     this.userService = userService;
     this.productService = productService;
     this.passwordEncoder = passwordEncoder;
     this.jwtUtil = jwtUtil;
     this.generalUserDetailsService = generalUserDetailsService;
+    this.adminConfiguration = adminConfiguration;
+  }
+
+  //  TODO make this more secure, and improve the logic
+  @CrossOrigin()
+  @GetMapping("/check-admin")
+  boolean checkAdmin() {
+    boolean res = userService.findByEmail(adminConfiguration.getEmail()).isPresent();
+
+    //    ------------------- The only code that goes down here is for the set up of admin
+    // -------------------
+    if (!res) {
+      UserSignUpInput in = new UserSignUpInput();
+      in.setEmail(adminConfiguration.getEmail());
+      in.setPassword(adminConfiguration.getPassword());
+      this.addUser(in);
+      //    TODO use a better exception here
+      UserEntity admin =
+          userService
+              .findByEmail(in.getEmail())
+              .<AuthenticationError>orElseThrow(
+                  () -> {
+                    throw new AuthenticationError("Could not set up admin.");
+                  });
+      Role admin_role = new Role();
+      admin_role.setRole("ROLE_ADMIN");
+      admin.getRoles().add(admin_role);
+      userService.save(admin);
+    }
+    return res;
+  }
+
+  @CrossOrigin()
+  @GetMapping("/users/get-roles")
+  Set<Role> getRoles() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (!(authentication.getPrincipal() instanceof UserDetails)) {
+      throw new AuthenticationError("User not authenticated.");
+    }
+    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+    return userService
+        .findByEmail(userDetails.getUsername())
+        .<BusinessErrorException>orElseThrow(
+            () -> {
+              throw new BusinessErrorException("User has been deleted");
+            })
+        .getRoles();
   }
 
   //  TODO right now users is at conflict with users post "security wise" because one need
@@ -66,7 +118,8 @@ class UserController {
             });
   }
 
-//  TODO you showed sql back to the user, check what the hell happened there also check why address and email are the same
+  //  TODO you showed sql back to the user, check what the hell happened there also check why
+  // address and email are the same
   @CrossOrigin()
   @PostMapping("/users")
   ResponseEntity<?> addUser(@Valid @RequestBody UserSignUpInput userSignUpInput) {
@@ -115,7 +168,8 @@ class UserController {
 
     if (newUserEntity.getEmail() != null) {
       if (userService.findByEmail(newUserEntity.getEmail()).isPresent()) {
-        if (!(userEntity.getEmail()!= null && newUserEntity.getEmail().equals(userEntity.getEmail())))
+        if (!(userEntity.getEmail() != null
+            && newUserEntity.getEmail().equals(userEntity.getEmail())))
           throw new BusinessErrorException("A user name with this user name already exists");
       }
       userEntity.setEmail(newUserEntity.getEmail());

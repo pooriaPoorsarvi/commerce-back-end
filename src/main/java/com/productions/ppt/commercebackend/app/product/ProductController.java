@@ -28,6 +28,11 @@ class ProductController {
     this.categoryService = categoryService;
   }
 
+  @GetMapping("/products/admin")
+  String adminOnly() {
+    return "admin only";
+  }
+
   @GetMapping("/products/{ID}/categories")
   Set<CategoryEntity> getCategories(@PathVariable Integer ID) {
     Optional<ProductEntity> p1 = productRepository.findById(ID);
@@ -70,6 +75,8 @@ class ProductController {
         .get();
   }
 
+
+//  TODO transform this into get mapping
   @CrossOrigin()
   @PostMapping("/products/search")
   List<ProductEntity> search(@RequestBody @Valid @NotNull String searchExpression){

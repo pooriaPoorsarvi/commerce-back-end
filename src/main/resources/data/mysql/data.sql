@@ -34,7 +34,9 @@ values (1, 10, 0, 1);
 insert into user_entity(id, email, first_name, is_account_expired, is_account_non_locked, is_credentials_non_expired, is_enabled, last_name, password)
 values (1, 'p@gm.c', 'pooria', 0, 1, 1, 1, 'poorsarvi', 'password');
 
+-- TODO move this two role creations in the code
 insert into role (role) values ('ROLE_USER');
+insert into role (role) values ('ROLE_ADMIN');
 
 insert into user_entity_roles (user_entity_id, roles_role)
 values (1, 'ROLE_USER');
