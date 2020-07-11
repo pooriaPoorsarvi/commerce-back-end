@@ -28,6 +28,7 @@ public class ProductEntity {
   @NotNull private Double price;
 
   @Size(min = 1, max = 2000)
+  @JsonProperty("imgSrc")
   private String imageSrc;
 
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)

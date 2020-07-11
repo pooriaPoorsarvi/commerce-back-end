@@ -25,6 +25,7 @@ class CategoryController {
     this.productService = productService;
   }
 
+  @CrossOrigin()
   @PostMapping("/categories")
   ResponseEntity<Object> createController(@Valid @RequestBody CategoryEntity c) {
     categoryRepository.save(c);

@@ -43,8 +43,12 @@ class ProductController {
             });
   }
 
+//  TODO update the origin for these cross origins
+  @CrossOrigin()
   @PostMapping("/products")
   ResponseEntity<Object> createProduct(@Valid @RequestBody ProductEntity productEntity) {
+//    TODO set a DTO so that you can filter out id later and you don't have to do this each time manually
+    productEntity.setId(0);
     productRepository.save(productEntity);
     URI location =
         ServletUriComponentsBuilder.fromCurrentRequest()
@@ -80,6 +84,7 @@ class ProductController {
   @CrossOrigin()
   @PostMapping("/products/search")
   List<ProductEntity> search(@RequestBody @Valid @NotNull String searchExpression){
+    System.out.println(searchExpression);
     return productRepository.findBySearch(searchExpression);
   }
 
