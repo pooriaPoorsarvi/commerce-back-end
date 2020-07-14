@@ -31,6 +31,6 @@ interface ProductRepository
 
   @Query(
       value =
-          "select distinct p from ProductEntity as p where p.name = :searchExpression", nativeQuery = true)
+              "select distinct p from ProductEntity as p where p.description like %:searchExpression% or p.name like %:searchExpression% ")
   List<ProductEntity> findBySearch(@Param("searchExpression") String searchExpression);
 }
