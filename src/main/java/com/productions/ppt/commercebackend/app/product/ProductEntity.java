@@ -36,6 +36,12 @@ public class ProductEntity {
   @Column(columnDefinition = "INT  default '0'", nullable = false)
   private Integer numberOfAvailableInStock = 0;
 
+// TODO increase the number of purchased products as time passes
+  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+  @Column(columnDefinition = "INT  default '0'", nullable = false)
+  private Integer numberOfPurchases = 0;
+
+
   @ManyToMany(
       fetch = FetchType.LAZY,
       cascade = {CascadeType.PERSIST, CascadeType.MERGE})
