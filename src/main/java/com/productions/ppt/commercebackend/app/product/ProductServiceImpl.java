@@ -29,4 +29,9 @@ class ProductServiceImpl implements ProductService {
     public void save(ProductEntity productEntity) {
         productRepository.save(productEntity);
     }
+
+    @Override
+    public void flush() {
+        productRepository.flush();
+    }
 }

@@ -2,6 +2,7 @@ package com.productions.ppt.commercebackend.app.category;
 
 import com.productions.ppt.commercebackend.app.product.ProductEntity;
 import com.productions.ppt.commercebackend.app.product.ProductService;
+import com.productions.ppt.commercebackend.exceptions.BusinessErrorException;
 import com.productions.ppt.commercebackend.exceptions.EntityNotFoundInDBException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,9 +19,7 @@ class CategoryController {
   CategoryRepository categoryRepository;
   ProductService productService;
 
-  CategoryController(
-      CategoryRepository categoryRepository,
-      ProductService productService) {
+  CategoryController(CategoryRepository categoryRepository, ProductService productService) {
     this.categoryRepository = categoryRepository;
     this.productService = productService;
   }
@@ -28,13 +27,19 @@ class CategoryController {
   @CrossOrigin()
   @PostMapping("/categories")
   ResponseEntity<Object> createController(@Valid @RequestBody CategoryEntity c) {
+    //  TODO do a check on all of the instances that you have had to use the setId(0)
+    //    c.setId(0);
+    System.out.println(c.getId());
     categoryRepository.save(c);
     URI location =
-        ServletUriComponentsBuilder.fromCurrentRequest().path("/{ID}").buildAndExpand(c.getId()).toUri();
+        ServletUriComponentsBuilder.fromCurrentRequest()
+            .path("/{ID}")
+            .buildAndExpand(c.getId())
+            .toUri();
     return ResponseEntity.created(location).build();
   }
 
-  @PostMapping("/categories/{categoryID}/add/product/{productID}}")
+  @PostMapping("/categories/{categoryID}/add/product/{productID}")
   ResponseEntity<Object> addProductToCategory(
       @PathVariable Integer categoryID, @PathVariable Integer productID) {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
@@ -64,6 +69,7 @@ class CategoryController {
     return ResponseEntity.created(location).build();
   }
 
+  @CrossOrigin()
   @GetMapping("/categories/{ID}")
   CategoryEntity createController(@PathVariable Integer ID) {
     Optional<CategoryEntity> c = categoryRepository.findById(ID);
@@ -85,9 +91,45 @@ class CategoryController {
   }
 
   @CrossOrigin()
-  @GetMapping("/categories")
-  List<CategoryEntity> getAllCategories(){
-    return categoryRepository.findAll();
+  @DeleteMapping("/categories/{ID}")
+  void deleteCategory(@PathVariable Integer ID) {
+    CategoryEntity c =
+        categoryRepository
+            .findById(ID)
+            .<BusinessErrorException>orElseThrow(
+                () -> {
+                  throw new BusinessErrorException("Category not found");
+                });
+    categoryRepository.delete(c);
+    categoryRepository.flush();
   }
 
+  @CrossOrigin()
+  @DeleteMapping("/categories/{categoryID}/remove/product/{productID}")
+  void deleteCategory(@PathVariable Integer categoryID, @PathVariable Integer productID) {
+    CategoryEntity c =
+            categoryRepository
+                    .findById(categoryID)
+                    .<BusinessErrorException>orElseThrow(
+                            () -> {
+                              throw new BusinessErrorException("Category not found");
+                            });
+    Set<ProductEntity> prs = c.getProductEntities();
+    for (ProductEntity p : prs) {
+        if (p.getId().equals(productID)){
+          c.getProductEntities().remove(p);
+          categoryRepository.save(c);
+          productService.save(p);
+          categoryRepository.flush();
+          productService.flush();
+          return;
+        }
+    }
+  }
+
+  @CrossOrigin()
+  @GetMapping("/categories")
+  List<CategoryEntity> getAllCategories() {
+    return categoryRepository.findAll();
+  }
 }

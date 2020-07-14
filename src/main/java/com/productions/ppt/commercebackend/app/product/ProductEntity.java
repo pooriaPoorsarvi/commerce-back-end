@@ -31,9 +31,10 @@ public class ProductEntity {
   @JsonProperty("imgSrc")
   private String imageSrc;
 
+//  TODO update the number of product when there is a product purchase
   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Column(columnDefinition = "INT  default '0'", nullable = false)
-  private Integer numberOfPurchases = 0;
+  private Integer numberOfAvailableInStock = 0;
 
   @ManyToMany(
       fetch = FetchType.LAZY,
@@ -89,12 +90,12 @@ public class ProductEntity {
     this.imageSrc = imageSrc;
   }
 
-  public Integer getNumberOfPurchases() {
-    return numberOfPurchases;
+  public Integer getNumberOfAvailableInStock() {
+    return numberOfAvailableInStock;
   }
 
-  public void setNumberOfPurchases(Integer numberOfPurchases) {
-    this.numberOfPurchases = numberOfPurchases;
+  public void setNumberOfAvailableInStock(Integer numberOfPurchases) {
+    this.numberOfAvailableInStock = numberOfPurchases;
   }
 
   public ProductEntity() {}

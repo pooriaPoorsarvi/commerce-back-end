@@ -9,4 +9,5 @@ public interface ProductService {
   Optional<ProductEntity> findById(Integer id);
   Page<ProductEntity> findAll(Pageable pageable);
   void save(ProductEntity productEntity);
+  void flush();
 }

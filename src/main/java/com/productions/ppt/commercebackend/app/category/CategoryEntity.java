@@ -10,8 +10,8 @@ import java.util.Set;
 
 @Entity
 public class CategoryEntity {
-
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+// TODO check if you need to bring back the restriction on write
+//  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Integer id;
@@ -26,6 +26,7 @@ public class CategoryEntity {
   @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categoryEntityList")
   private Set<ProductEntity> productEntities;
 
+//  TODO make sure that if you remove a category the products will remain
   public Set<ProductEntity> getProductEntities() {
     return productEntities;
   }
