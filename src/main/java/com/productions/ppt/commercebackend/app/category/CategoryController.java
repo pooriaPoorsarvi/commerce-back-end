@@ -39,17 +39,19 @@ class CategoryController {
     return ResponseEntity.created(location).build();
   }
 
+  @CrossOrigin()
   @PostMapping("/categories/{categoryID}/add/product/{productID}")
   ResponseEntity<Object> addProductToCategory(
       @PathVariable Integer categoryID, @PathVariable Integer productID) {
     Optional<CategoryEntity> categoryEntityOptional = categoryRepository.findById(categoryID);
     Optional<ProductEntity> productEntityOptional = productService.findById(productID);
-
-    if (categoryEntityOptional.isPresent()) {
+    System.out.println(categoryID);
+    System.out.println(productID);
+    if (!categoryEntityOptional.isPresent()) {
       throw new EntityNotFoundInDBException("Category not found.");
     }
 
-    if (productEntityOptional.isPresent()) {
+    if (!productEntityOptional.isPresent()) {
       throw new EntityNotFoundInDBException("Product not found.");
     }
 
@@ -61,6 +63,8 @@ class CategoryController {
 
     categoryRepository.save(categoryEntity);
     productService.save(productEntity);
+    categoryRepository.flush();
+    productService.flush();
 
     URI location =
         ServletUriComponentsBuilder.fromPath("/category/{categoryID}")
@@ -118,6 +122,7 @@ class CategoryController {
     for (ProductEntity p : prs) {
         if (p.getId().equals(productID)){
           c.getProductEntities().remove(p);
+          p.getCategoryEntityList().remove(c);
           categoryRepository.save(c);
           productService.save(p);
           categoryRepository.flush();
@@ -125,6 +130,7 @@ class CategoryController {
           return;
         }
     }
+    throw new BusinessErrorException("Product ID not found inside the category");
   }
 
   @CrossOrigin()

@@ -32,7 +32,8 @@ public class ProductEntity {
   private String imageSrc;
 
 //  TODO update the number of product when there is a product purchase
-  @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+//  TODO Check the json property and whether or not it can cause a problem
+//    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
   @Column(columnDefinition = "INT  default '0'", nullable = false)
   private Integer numberOfAvailableInStock = 0;
 
