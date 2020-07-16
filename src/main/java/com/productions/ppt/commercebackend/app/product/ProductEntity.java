@@ -111,4 +111,12 @@ public class ProductEntity {
     this.id = id;
     this.name = name;
   }
+
+  public Integer getNumberOfPurchases() {
+    return numberOfPurchases;
+  }
+
+  public void setNumberOfPurchases(Integer numberOfPurchases) {
+    this.numberOfPurchases = numberOfPurchases;
+  }
 }
