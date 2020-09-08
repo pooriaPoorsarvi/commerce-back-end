@@ -52,3 +52,23 @@ values (1, 1);
 insert into user_entity_order_entity_list (user_entity_id, order_entity_list_id)
 values (1, 1);
 
+
+insert into banner_entity (id, image_src, url)
+values (1,
+        'https://www.sanyoappliance.in/wp-content/uploads/2017/12/banner-1.jpg',
+        '/main/tabs/cart');
+
+
+
+insert into banner_entity (id, image_src, url)
+values (2,
+        'https://www.tcl.com/content/dam/tcl-dam/region/in/product/launch-banner-1.jpg',
+        '/main/tabs/cart');
+
+
+
+insert into banner_entity (id, image_src, url)
+values (3,
+        'https://www.sky-futures.com/wp-content/uploads/2018/04/Sky-Futures-web-banner-background-7.png',
+        '/main/tabs/cart');
+
