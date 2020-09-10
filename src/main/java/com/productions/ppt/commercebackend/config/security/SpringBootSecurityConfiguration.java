@@ -32,13 +32,17 @@ public class SpringBootSecurityConfiguration extends WebSecurityConfigurerAdapte
   protected void configure(HttpSecurity http) throws Exception {
     //    TODO in the future only allow unauthorized people to log back in
     //    TODO check if allowing all options is ok
-    System.out.println("got here please");
+//  TODO factor out the OPTIONS
     http.csrf()
         .disable()
         .authorizeRequests()
+        .antMatchers(HttpMethod.OPTIONS, "*")
+        .permitAll()
+        .antMatchers(HttpMethod.OPTIONS, "/*")
+        .permitAll()
         .antMatchers("/products/admin")
         .hasRole("ADMIN")
-        .antMatchers(HttpMethod.OPTIONS, "/*")
+        .antMatchers(HttpMethod.OPTIONS, "*")
         .permitAll()
         .antMatchers(HttpMethod.POST, "/products/*")
         .hasRole("ADMIN")
@@ -60,11 +64,15 @@ public class SpringBootSecurityConfiguration extends WebSecurityConfigurerAdapte
         .hasRole("ADMIN")
         .antMatchers("/order/*")
         .authenticated()
-//        TODO check if this is nesc later
-            .antMatchers(HttpMethod.GET, "/users")
+        //        TODO check if this is nesc later
+        .antMatchers(HttpMethod.GET, "/users")
+        .permitAll()
+        .antMatchers(HttpMethod.OPTIONS, "/users")
         .permitAll()
         .antMatchers("/users")
         .authenticated()
+        .antMatchers(HttpMethod.OPTIONS, "/users/*")
+        .permitAll()
         .antMatchers("/users/*")
         .authenticated()
         .antMatchers("/authenticate")

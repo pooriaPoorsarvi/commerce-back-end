@@ -16,62 +16,51 @@ import java.util.List;
 @RestController
 public class BannerController {
 
-    BannerRepository bannerRepository;
-    UserService userService;
+  BannerRepository bannerRepository;
+  UserService userService;
 
-    public BannerController(BannerRepository bannerRepository, UserService userService) {
-        this.bannerRepository = bannerRepository;
-        this.userService = userService;
-    }
+  public BannerController(BannerRepository bannerRepository, UserService userService) {
+    this.bannerRepository = bannerRepository;
+    this.userService = userService;
+  }
 
-    @CrossOrigin()
-    @GetMapping("/banner/{ID}")
-    BannerEntity getBannerById(@PathVariable Integer ID){
-        return this.bannerRepository.findById(ID).<BusinessErrorException>orElseThrow(
+  @CrossOrigin()
+  @GetMapping("/banner/{ID}")
+  BannerEntity getBannerById(@PathVariable Integer ID) {
+    return this.bannerRepository
+        .findById(ID)
+        .<BusinessErrorException>orElseThrow(
+            () -> {
+              throw new BusinessErrorException("Banner ID not available.");
+            });
+  }
+
+  @CrossOrigin()
+  @GetMapping("/banner/all")
+  List<BannerEntity> getAllBanners() {
+    return this.bannerRepository.findAll();
+  }
+
+  //  TODO turn all these type of void returns into response entities by returning the resulting
+  // address
+  @CrossOrigin()
+  @PostMapping("/banner/add")
+  void createBanner(@RequestBody BannerEntity bannerEntity) {
+    this.bannerRepository.save(bannerEntity);
+  }
+
+  @CrossOrigin()
+  @DeleteMapping("/banner/{ID}")
+  void deleteBanner(@PathVariable Integer ID) {
+
+    BannerEntity bannerEntity =
+        this.bannerRepository
+            .findById(ID)
+            .<BusinessErrorException>orElseThrow(
                 () -> {
-                    throw new BusinessErrorException("Banner ID not available.");
-                }
-        );
-    }
+                  throw new BusinessErrorException("Banner ID not available.");
+                });
 
-    @CrossOrigin()
-    @GetMapping("/banner/all")
-    List<BannerEntity> getAllBanners(){
-        return this.bannerRepository.findAll();
-    }
-
-//  TODO turn all these type of void returns into response entities by returning the resulting address
-    @CrossOrigin()
-    @PostMapping("/banner/add")
-    void createBanner(@RequestBody BannerEntity bannerEntity){
-        this.bannerRepository.save(bannerEntity);
-    }
-
-
-    @CrossOrigin()
-    @DeleteMapping("/banner/{ID}")
-    void deleteBanner(@PathVariable Integer ID){
-
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-//        UserEntity userEntity =
-//                userService
-//                        .findByEmail(userDetails.getUsername())
-//                        .<EntityNotFoundInDBException>orElseThrow(
-//                                () -> {
-//                                    throw new EntityNotFoundInDBException("User not found");
-//                                });
-//
-//        System.out.println(userEntity);
-
-        BannerEntity bannerEntity = this.bannerRepository.findById(ID).<BusinessErrorException>orElseThrow(
-                () -> {
-                    throw new BusinessErrorException("Banner ID not available.");
-                }
-        );
-
-        this.bannerRepository.delete(bannerEntity);
-
-    }
-
+    this.bannerRepository.delete(bannerEntity);
+  }
 }
